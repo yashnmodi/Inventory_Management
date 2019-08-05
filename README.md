@@ -1,6 +1,6 @@
 # Inventory_Management
 Version 1.0.0
-Bulid on August 5th, 2019.
+Bulit on August 5th, 2019.
 
 Inventory Management System or Stock Management System built using Java Swing and Sqlite. It's a stand-alone JAR. Maven is used for buliding the JAR.
 
