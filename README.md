@@ -7,7 +7,10 @@ Inventory Management System or Stock Management System built using Java Swing an
 -> Offline Sqlite Database
 -> Stand-alone JAR
 
+## Prerequisites:
+-> JRE 1.8
+-> Sqlite3.dll (To customize database schema)
 
-***********Configuration*************
+## Configuration:
 Database Path is hardcoded however database source change functionality will be available soon.
 Default Path for database is -> C:\database\<your-db-name>.db
