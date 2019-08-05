@@ -243,13 +243,25 @@ class ButtonListener implements ActionListener{
 			IMStart.changePanel(IMStart.mp);
 		}
 		if(btnCode.equals("Add Product")) {
-			Db.updateList("product_list", IMStart.product.getText().toString());
+			try {
+				Db.updateList("product_list", IMStart.product.getText().toString());
+			} catch (Exception err) {
+				JOptionPane.showConfirmDialog(IMStart.frame, "Product already added.\nERROR:"+err.getMessage(),"WARNING",JOptionPane.WARNING_MESSAGE );
+			}
 		}
 		if(btnCode.equals("Add Colour")) {
-			Db.updateList("colour_list", IMStart.colour.getText().toString());
+			try {
+				Db.updateList("colour_list", IMStart.colour.getText().toString());
+			} catch (Exception err) {
+				JOptionPane.showConfirmDialog(IMStart.frame, "Colour already added.\nERROR:"+err.getMessage(),"WARNING",JOptionPane.WARNING_MESSAGE );
+			}
 		}
 		if(btnCode.equals("Add Weight")) {
-			Db.updateList("weight_list", IMStart.weight.getText().toString());
+			try {
+				Db.updateList("weight_list", IMStart.weight.getText().toString());
+			} catch (Exception err) {
+				JOptionPane.showConfirmDialog(IMStart.frame, "Weight already added.\nERROR:"+err.getMessage(),"WARNING",JOptionPane.WARNING_MESSAGE );
+			}
 		}
 	}
 }

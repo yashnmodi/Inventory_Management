@@ -35,18 +35,11 @@ public class Db {
 		return rs;	
 	}
 	
-	public static int updateList(String table, String value) {
-		int rc=0;
+	public static void updateList(String table, String value) throws Exception {
 		Connection conn = connect();
-		try {
-			Statement stat = conn.createStatement();
-			String sql = "INSERT INTO "+table+" values ('"+value+"');";
-			stat.executeUpdate(sql);
-		} catch (SQLException e) {
-			rc=1;
-            System.out.println(e.getMessage());
-		}
-		return rc;
+		Statement stat = conn.createStatement();
+		String sql = "INSERT INTO "+table+" values ('"+value+"');";
+		stat.executeUpdate(sql);
 	}
 	
 	public static ResultSet addProduct(String product, String colour, String weight, int qty) throws Exception{
