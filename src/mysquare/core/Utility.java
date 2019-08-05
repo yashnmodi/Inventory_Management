@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class Utility {
 	
-	private static String dbSource = "jdbc:sqlite:H:/Work Station/Java/IMS/database/rbp.db";
+	private static String dbSource = "jdbc:sqlite:C:/database/rbp.db";
 	
 	public static void setSource(String str) {
 		dbSource = str;
