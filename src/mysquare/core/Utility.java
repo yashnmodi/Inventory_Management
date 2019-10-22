@@ -34,21 +34,21 @@ public class Utility {
 		return properties;
 	}
 
-	public static String[] getProductList() {
+	public String[] getProductList() {
 		ArrayList<String> productList = Db.fetchPList();
-	    String[] pArr = productList.toArray(new String[productList.size()]);
-	    return pArr;
+	    String[] productArr = productList.toArray(new String[productList.size()]);
+	    return productArr;
 	}
 	
-	public static String[] getColourList() {
+	public String[] getColourList() {
 		ArrayList<String> colourList = Db.fetchCList();
-	    String[] cArr = colourList.toArray(new String[colourList.size()]);
-	    return cArr;
+	    String[] colourArr = colourList.toArray(new String[colourList.size()]);
+	    return colourArr;
    	}
 	
-	public static String[] getWeightList() {
+	public String[] getWeightList() {
 		ArrayList<String> weightList = Db.fetchWList();
-		String[] wArr = weightList.toArray(new String[weightList.size()]);
-		return wArr;
+		String[] weightArr = weightList.toArray(new String[weightList.size()]);
+		return weightArr;
 	}
 }

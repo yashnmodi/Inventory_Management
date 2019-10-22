@@ -143,10 +143,10 @@ public class IMStart {
 		});
 	    
 		getCenterPanel();
-		
-	    JComboBox<String> cb1 = new JComboBox<String>(Utility.getProductList());
-	    JComboBox<String> cb2 = new JComboBox<String>(Utility.getColourList());
-	    JComboBox<String> cb3 = new JComboBox<String>(Utility.getWeightList());
+		Utility obj = new Utility();
+	    JComboBox<String> cb1 = new JComboBox<String>(obj.getProductList());
+	    JComboBox<String> cb2 = new JComboBox<String>(obj.getColourList());
+	    JComboBox<String> cb3 = new JComboBox<String>(obj.getWeightList());
 	       
 	    JLabel lab1 = new JLabel("Product"); 
 	    mp.add(lab1);

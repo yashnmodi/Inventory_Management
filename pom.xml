@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>IMS</groupId>
   <artifactId>IMS</artifactId>
-  <version>1.0.0-SNAPSHOT</version>
+  <version>1.0.1</version>
   <build>
     <sourceDirectory>src</sourceDirectory>
     <plugins>
@@ -32,6 +32,8 @@
 	                <descriptorRefs>
 	                    <descriptorRef>jar-with-dependencies</descriptorRef>
 	                </descriptorRefs>
+                    <finalName>${project.artifactId}-${project.version}</finalName>
+                    <appendAssemblyId>false</appendAssemblyId>
 	            </configuration>
 	        </execution>
 	    </executions>

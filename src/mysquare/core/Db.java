@@ -14,19 +14,18 @@ public class Db {
 	
 	private static Connection conn = null;
 	
-	public static Connection connect() {    
+	private static Connection connect() {
 	    try {    
 	    	if(conn == null){
 	    	    //Class.forName("org.sqlite.JDBC");
 				Utility u =new Utility();
-	    	    HashMap<String, String> props = u.getProperties();
-	            conn = DriverManager.getConnection(props.get("dbDriver")+props.get("dbSource"));
-	            System.out.println("Connection to SQLite has been established.");  
+	    	    HashMap<String, String> properties = u.getProperties();
+	            conn = DriverManager.getConnection(properties.get("dbDriver")+properties.get("dbSource"));
+	            System.out.println("Connection to Database has been established.");
 	        } 
 	    } catch (SQLException | IOException e) {
 	            System.out.println(e.getMessage());  
 	    }
-	    
 	    return conn;
 	}
 	
