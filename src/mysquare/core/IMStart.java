@@ -28,8 +28,7 @@ public class IMStart {
 	static JTextField product = new JTextField(25);
 	static JTextField colour = new JTextField(25);
 	static JTextField weight = new JTextField(25);
-	
-		
+
 	public static void getCenterPanel() {
 		model = new DefaultTableModel();
 		JTable table = new JTable( model );
@@ -128,7 +127,7 @@ public class IMStart {
         m3i3.addActionListener(new ActionListener() {	
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
+
 				JPanel panel = new JPanel();
 				JButton home = new JButton("Home");
 				JLabel lab3 = new JLabel("Enter Weight: ");
@@ -236,7 +235,7 @@ class ButtonListener implements ActionListener{
 		String btnCode = e.getActionCommand().toString();
 		if(btnCode.equals("Change Data Source")) {
 			String str = JOptionPane.showInputDialog("Enter New Data Source:");
-			Utility.setSource(str);
+			//Utility.setSource(str);
 			System.out.print(str);
 		}
 		if(btnCode.equals("Home")) {

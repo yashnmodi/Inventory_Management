@@ -1,12 +1,14 @@
 package mysquare.core;
 
-import java.sql.Connection;  
+import java.io.IOException;
+import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Db {
 	
@@ -15,12 +17,13 @@ public class Db {
 	public static Connection connect() {    
 	    try {    
 	    	if(conn == null){
-	    	    //Class.forName("org.sqlite.JDBC");    
-	    	    String url = Utility.getSource();  
-	            conn = DriverManager.getConnection(url);  
+	    	    //Class.forName("org.sqlite.JDBC");
+				Utility u =new Utility();
+	    	    HashMap<String, String> props = u.getProperties();
+	            conn = DriverManager.getConnection(props.get("dbDriver")+props.get("dbSource"));
 	            System.out.println("Connection to SQLite has been established.");  
 	        } 
-	    } catch (SQLException e) {  
+	    } catch (SQLException | IOException e) {
 	            System.out.println(e.getMessage());  
 	    }
 	    
