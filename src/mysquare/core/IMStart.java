@@ -1,266 +1,121 @@
 package mysquare.core;
 
-import java.awt.BorderLayout;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.ResultSet;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.table.DefaultTableModel;
+import javax.swing.*;
 
 public class IMStart {
 	
-	static JFrame frame = new JFrame();
-	private static JMenuBar mb = new JMenuBar();
-	static JPanel mp = new JPanel();
-	private static JScrollPane scrollPane;
-	private static DefaultTableModel model;
-	static JTextField product = new JTextField(25);
-	static JTextField colour = new JTextField(25);
-	static JTextField weight = new JTextField(25);
+	public static JFrame frame = new JFrame();
+	public static JMenuBar mb = new JMenuBar();
+	public static JMenu m1,m2,m3,m4;
+	public static JMenuItem m2i1, m2i2, m2i3, m3i1;
+	public static JScrollPane jScrollPane;
 
-	public static void getCenterPanel() {
-		model = new DefaultTableModel();
-		JTable table = new JTable( model );
-	    scrollPane = new JScrollPane(table);
-	    scrollPane.setHorizontalScrollBarPolicy(
-	    JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-	    scrollPane.setVerticalScrollBarPolicy(
-	    JScrollPane.VERTICAL_SCROLLBAR_ALWAYS); 
-	    
-	    model.addColumn("PRODUCT");
-	    model.addColumn("COLOUR");
-	    model.addColumn("WEIGHT");
-	    model.addColumn("QUANTITY");
-	}
-	
-	public static void changePanel(JPanel panel) {
-		frame.getContentPane().removeAll();
-		frame.getContentPane().add(mb, BorderLayout.NORTH);
-		frame.getContentPane().add(scrollPane,BorderLayout.CENTER);
-		frame.getContentPane().add(panel, BorderLayout.SOUTH);
-		frame.getContentPane().doLayout();
-		frame.update(frame.getGraphics());
-		frame.setVisible(true);
-	}
-	
-	public static void getBottomPanel() {
-		
-	}	
-	
-	public static void main(String[] args) { 
-		frame.setTitle("IMS: Raj Blow Plast");
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setSize(900,500);
-		
 
-		JMenu m2 = new JMenu("Settings");
-		JMenu m3 = new JMenu("Edit");
-		JMenu m4 = new JMenu("History");
-	    JMenuItem m2i1 = new JMenuItem("Change Data Source");
-        JMenuItem m3i1 = new JMenuItem("Update Products List");
-        JMenuItem m3i2 = new JMenuItem("Update Colours List");
-        JMenuItem m3i3 = new JMenuItem("Update Weights List");
-        JMenuItem m4i1 = new JMenuItem("Manufactured");
-        JMenuItem m4i2 = new JMenuItem("Sold");
-        m2.add(m2i1);
-        m3.add(m3i1);
-        m3.add(m3i2);
-        m3.add(m3i3);
-        m4.add(m4i1);
-        m4.add(m4i2);
-        mb.add(m2);
-        mb.add(m3);
-        mb.add(m4);
-        //JButton addP = new JButton("Add Product");
-        //JButton addC = new JButton("Add Colour");
-        //JButton addW = new JButton("Add Weight");
-        
-		m2i1.addActionListener(new ButtonListener());
-		
-        m3i1.addActionListener(new ActionListener() {	
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				JPanel panel = new JPanel();
-				JButton home = new JButton("Home");
-				JLabel lab1 = new JLabel("Enter Product: ");		
-				JButton addP = new JButton("Add Product");
-				panel.add(home);
-				panel.add(lab1);
-				panel.add(product);
-				panel.add(addP);
-				changePanel(panel);
-				home.addActionListener(new ButtonListener());
-				addP.addActionListener(new ButtonListener());
-			}
-		});
-        
-        m3i2.addActionListener(new ActionListener() {	
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				JPanel panel = new JPanel();
-				JButton home = new JButton("Home");
-				JLabel lab2 = new JLabel("Enter Colour: ");
-				JButton addC = new JButton("Add Colour");
-				panel.add(home);
-				panel.add(lab2);
-				panel.add(colour);
-				panel.add(addC);
-				changePanel(panel);
-				home.addActionListener(new ButtonListener());
-				addC.addActionListener(new ButtonListener());
-			}
-		});
-        
-        m3i3.addActionListener(new ActionListener() {	
-			@Override
-			public void actionPerformed(ActionEvent e) {
+	IMStart(){
+		m2 = new JMenu("View");
+		m3 = new JMenu("Operations");
+		//m4 = new JMenu("");
+		m2i1 = new JMenuItem("Production");
+		m2i2 = new JMenuItem("Dispatch");
+		m2i3 = new JMenuItem("Stock");
+		//m2i1 = new JMenuItem("Change Data Source");
+		m3i1 = new JMenuItem("Modify products");
+		m2.add(m2i1);
+		m2.add(m2i2);
+		m2.add(m2i3);
+		m3.add(m3i1);
+		//m3.add(m3i2);
+		//m3.add(m3i3);
+		//m4.add(m4i1);
+		//m4.add(m4i2);
+		mb.add(m2);
+		mb.add(m3);
+		//mb.add(m4);
+	}
 
-				JPanel panel = new JPanel();
-				JButton home = new JButton("Home");
-				JLabel lab3 = new JLabel("Enter Weight: ");
-				JButton addW = new JButton("Add Weight");
-				panel.add(home);
-				panel.add(lab3);
-				panel.add(weight);
-				panel.add(addW);
-				changePanel(panel);
-				home.addActionListener(new ButtonListener());
-				addW.addActionListener(new ButtonListener());
-			}
-		});
-	    
-		getCenterPanel();
-		Utility obj = new Utility();
-	    JComboBox<String> cb1 = new JComboBox<String>(obj.getProductList());
-	    JComboBox<String> cb2 = new JComboBox<String>(obj.getColourList());
-	    JComboBox<String> cb3 = new JComboBox<String>(obj.getWeightList());
-	       
-	    JLabel lab1 = new JLabel("Product"); 
-	    mp.add(lab1);
-	    mp.add(cb1);
-		 
-	    JLabel lab2 = new JLabel("Colour");
-	    mp.add(lab2);
-	    mp.add(cb2);
-		
-	    JLabel lab3 = new JLabel("Weight");  
-	    mp.add(lab3);
-		mp.add(cb3); // Components Added using Flow Layout
-	    
-	    JLabel lab4 = new JLabel("Quantity");
-	    JTextField tf1 = new JTextField(5);
-	    mp.add(lab4);
-	    mp.add(tf1);
-	    
-	    JButton addBtn = new JButton("Add");
-	    JButton sellBtn = new JButton("Sell");
-	    mp.add(addBtn);
-	    mp.add(sellBtn);
-	    
-	  //Adding Components to the frame.
-	    frame.getContentPane().add(BorderLayout.SOUTH, mp);
-	    frame.getContentPane().add(BorderLayout.NORTH, mb);
-	    frame.getContentPane().add(BorderLayout.CENTER, scrollPane);
-	    frame.setVisible(true);
-	       
-	    ResultSet data = null;
-	 
-	    addBtn.addActionListener(new ActionListener() {	
-	    	@Override
-	    	public void actionPerformed(ActionEvent arg0) {
-	    		String product = cb1.getSelectedItem().toString();
-	    		String colour = cb2.getSelectedItem().toString();
-	    		String weight = cb3.getSelectedItem().toString();
-	    		int qty = Integer.parseInt(tf1.getText());
-	    		try {
-	    			ResultSet dataNew = Db.addProduct(product, colour, weight, qty);
-	    			model.setRowCount(0);
-	    			while(dataNew.next()) {
-	    				model.addRow(new Object[]{dataNew.getString("pname"), dataNew.getString("pclr"), dataNew.getString("pwt"), dataNew.getString("pqt")});
-	    			}
-	    		} catch (Exception e) {
-	    			JOptionPane.showMessageDialog(frame,"Unable to add product.\nERROR:"+e.getMessage(),"ERROR",JOptionPane.ERROR_MESSAGE);
-	    		}
-	    	}
-	    });
-	    
-	    sellBtn.addActionListener(new ActionListener() {
-	    	@Override
-	    	public void actionPerformed(ActionEvent arg0) {
-	    		String product = cb1.getSelectedItem().toString();
-	    		String colour = cb2.getSelectedItem().toString();
-				String weight = cb3.getSelectedItem().toString();
-				int qty = Integer.parseInt(tf1.getText());
-				try {
-					ResultSet dataNew = Db.sellProduct(product, colour, weight, qty);
-					model.setRowCount(0);
-					while(dataNew.next()) {
-						model.addRow(new Object[]{dataNew.getString("pname"), dataNew.getString("pclr"), dataNew.getString("pwt"), dataNew.getString("pqt")});
-				       }
-				} catch (Exception e) {
-					JOptionPane.showMessageDialog(frame,"Unable to add product.\nERROR:"+e.getMessage(),"ERROR",JOptionPane.ERROR_MESSAGE);
-				}	
-			}
-		});
-	          
-	    try {
-	    	data = Db.fetchData();
-	    	while(data.next()) {
-	    		model.addRow(new Object[]{data.getString("pname"), data.getString("pclr"), data.getString("pwt"), data.getString("pqt")});  
-	    	}
-	    } catch (Exception e) {
-	    	JOptionPane.showMessageDialog(frame,"Unable to load data.\nERROR:"+e.getMessage(),"ERROR",JOptionPane.ERROR_MESSAGE); 
-	    }
-	}
-}
+	public static void main(String[] args) {
+        frame.setTitle("Raj Blow Plast");
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        frame.setSize(900, 500);
+        frame.setJMenuBar(mb);
 
-class ButtonListener implements ActionListener{
-	ButtonListener(){
-	}
-	
-	public void actionPerformed(ActionEvent e) {
-		String btnCode = e.getActionCommand().toString();
-		if(btnCode.equals("Change Data Source")) {
-			String str = JOptionPane.showInputDialog("Enter New Data Source:");
-			//Utility.setSource(str);
-			System.out.print(str);
-		}
-		if(btnCode.equals("Home")) {
-			IMStart.changePanel(IMStart.mp);
-		}
-		if(btnCode.equals("Add Product")) {
-			try {
-				Db.updateList("product_list", IMStart.product.getText().toString());
-			} catch (Exception err) {
-				JOptionPane.showConfirmDialog(IMStart.frame, "Product already added.\nERROR:"+err.getMessage(),"WARNING",JOptionPane.WARNING_MESSAGE );
-			}
-		}
-		if(btnCode.equals("Add Colour")) {
-			try {
-				Db.updateList("colour_list", IMStart.colour.getText().toString());
-			} catch (Exception err) {
-				JOptionPane.showConfirmDialog(IMStart.frame, "Colour already added.\nERROR:"+err.getMessage(),"WARNING",JOptionPane.WARNING_MESSAGE );
-			}
-		}
-		if(btnCode.equals("Add Weight")) {
-			try {
-				Db.updateList("weight_list", IMStart.weight.getText().toString());
-			} catch (Exception err) {
-				JOptionPane.showConfirmDialog(IMStart.frame, "Weight already added.\nERROR:"+err.getMessage(),"WARNING",JOptionPane.WARNING_MESSAGE );
-			}
-		}
-	}
+        try {
+            new IMStart();
+            jScrollPane = new JScrollPane(Stock.getStockView());
+            frame.getContentPane().add(BorderLayout.CENTER, jScrollPane);
+            frame.setVisible(true);
+            //m2i1.addActionListener(new ButtonListener());
+
+            m2i1.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    try {
+                        frame.getContentPane().removeAll();
+                        jScrollPane = new JScrollPane(Production.getProductionView());
+                        frame.getContentPane().add(BorderLayout.CENTER, jScrollPane);
+                        frame.getContentPane().add(BorderLayout.SOUTH, Production.getProductionPanel());
+                        frame.getContentPane().doLayout();
+                        frame.update(frame.getGraphics());
+                        frame.setVisible(true);
+                    }catch (Exception ex){
+                        JOptionPane.showMessageDialog(frame,"Unable to retrieve Manufactured products.\nERROR:"+ex.getMessage(),"ERROR",JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            });
+
+            m2i2.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    try {
+                        frame.getContentPane().removeAll();
+                        jScrollPane = new JScrollPane(Dispatch.getDispatchView());
+                        frame.getContentPane().add(BorderLayout.CENTER, jScrollPane);
+                        frame.getContentPane().add(BorderLayout.SOUTH, Dispatch.getDispatchPanel());
+                        frame.getContentPane().doLayout();
+                        frame.update(frame.getGraphics());
+                        frame.setVisible(true);
+                    }catch (Exception ex){
+                        JOptionPane.showMessageDialog(frame,"Unable to retrieve Dispatched products.\nERROR:"+ex.getMessage(),"ERROR",JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            });
+
+            m2i3.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    try {
+                        frame.getContentPane().removeAll();
+                        jScrollPane = new JScrollPane(Stock.getStockView());
+                        frame.getContentPane().add(BorderLayout.CENTER, jScrollPane);
+                        frame.getContentPane().doLayout();
+                        frame.update(frame.getGraphics());
+                        frame.setVisible(true);
+                    }catch (Exception ex){
+                        JOptionPane.showMessageDialog(frame,"Unable to retrieve Stock.\nERROR:"+ex.getMessage(),"ERROR",JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            });
+
+            m3i1.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    try {
+                        frame.getContentPane().removeAll();
+                        jScrollPane = new JScrollPane(ModifyProducts.getPanel());
+                        frame.getContentPane().add(BorderLayout.CENTER, jScrollPane);
+                        frame.getContentPane().doLayout();
+                        frame.update(frame.getGraphics());
+                        frame.setVisible(true);
+                    }catch (Exception ex){
+                        JOptionPane.showMessageDialog(frame,"Unable to retrieve Stock.\nERROR:"+ex.getMessage(),"ERROR",JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            });
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(frame, "Sorry! Something went wrong.\nERROR:" + e.getMessage(), "ERROR", JOptionPane.ERROR_MESSAGE);
+        }
+    }
 }

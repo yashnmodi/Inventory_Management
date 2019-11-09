@@ -29,18 +29,28 @@ public class Db {
 	    return conn;
 	}
 	
-	public static ResultSet fetchData() throws SQLException {
+	public static ResultSet fetchData(String tableName) throws SQLException {
 		ResultSet rs = null;
 		Connection conn = connect();
 		Statement stat = conn.createStatement();
-		rs = stat.executeQuery("SELECT * FROM products ORDER BY pname;");
+		if("products".equalsIgnoreCase(tableName))
+			rs = stat.executeQuery("SELECT * FROM "+tableName+" ORDER BY pname;");
+		else
+			rs = stat.executeQuery("SELECT * FROM "+tableName+" ORDER BY timestamp DESC;");
 		return rs;	
 	}
 	
-	public static void updateList(String table, String value) throws Exception {
+	public static void addItem(String table, String value) throws Exception {
 		Connection conn = connect();
 		Statement stat = conn.createStatement();
-		String sql = "INSERT INTO "+table+" values ('"+value+"');";
+		String sql = "INSERT INTO "+table+" VALUES ('"+value+"');";
+		stat.executeUpdate(sql);
+	}
+
+	public static void removeItem(String table, String columnName, String value) throws Exception {
+		Connection conn = connect();
+		Statement stat = conn.createStatement();
+		String sql = " DELETE FROM "+table+" WHERE "+columnName+"='"+value+"';";
 		stat.executeUpdate(sql);
 	}
 	
@@ -68,10 +78,16 @@ public class Db {
 			ps3.setString(3, colour);
 			ps3.setString(4, weight);
 			ps3.executeUpdate();
-		}			
-			
+		}
+
+		PreparedStatement ps4 = conn.prepareStatement("INSERT INTO prod_records VALUES (strftime('%d/%m/%Y %H:%M:%S','now','localtime'),?,?,?,?);");
+		ps4.setString(1, product);
+		ps4.setString(2, colour);
+		ps4.setString(3, weight);
+		ps4.setInt(4, qty);
+		ps4.executeUpdate();
 		Statement s1 = conn.createStatement();
-		rs = s1.executeQuery("SELECT * FROM products ORDER BY pname;");
+		rs = s1.executeQuery("SELECT * FROM prod_records ORDER BY timestamp DESC;");
 		
 		return rs;
 	}
@@ -96,10 +112,16 @@ public class Db {
 			ps2.setString(3, colour);
 			ps2.setString(4, weight);
 			ps2.executeUpdate();
-		}	
-			
+		}
+
+		PreparedStatement ps3 = conn.prepareStatement("INSERT INTO sold_records VALUES (strftime('%d/%m/%Y %H:%M:%S','now','localtime'),?,?,?,?);");
+		ps3.setString(1, product);
+		ps3.setString(2, colour);
+		ps3.setString(3, weight);
+		ps3.setInt(4, qty);
+		ps3.executeUpdate();
 		Statement s1 = conn.createStatement();
-		rs = s1.executeQuery("SELECT * FROM products ORDER BY pname;");
+		rs = s1.executeQuery("SELECT * FROM sold_records ORDER BY timestamp DESC;");
 	
 		return rs;
 	}
