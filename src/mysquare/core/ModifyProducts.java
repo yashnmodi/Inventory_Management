@@ -1,6 +1,7 @@
 package mysquare.core;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -88,7 +89,7 @@ public class ModifyProducts {
                 JOptionPane.showConfirmDialog(IMStart.frame, "Weight not found.\nERROR:"+err.getMessage(),"WARNING",JOptionPane.WARNING_MESSAGE );
             }
         });
-
+        panel.setBackground(new Color(239,214,186));
         return panel;
     }
         /*if(btnCode.equals("Change Data Source")) {

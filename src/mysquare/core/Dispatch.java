@@ -2,6 +2,7 @@ package mysquare.core;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.ResultSet;
@@ -28,7 +29,7 @@ public class Dispatch {
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
-
+        table.setGridColor(new Color(239,214,186));
         return table;
     }
 
@@ -82,7 +83,7 @@ public class Dispatch {
                 }
             }
         });
-
+        panel.setBackground(new Color(239,176,137));
         return panel;
     }
 }

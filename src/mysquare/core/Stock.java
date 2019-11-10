@@ -2,6 +2,7 @@ package mysquare.core;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import java.awt.*;
 import java.sql.ResultSet;
 
 public class Stock {
@@ -13,7 +14,6 @@ public class Stock {
         model.addColumn("COLOUR");
         model.addColumn("WEIGHT");
         model.addColumn("QUANTITY");
-
         ResultSet data = null;
         try {
             data = Db.fetchData("products");
@@ -23,7 +23,7 @@ public class Stock {
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
-
+        table.setGridColor(new Color(239,214,186));
         return table;
     }
 }
