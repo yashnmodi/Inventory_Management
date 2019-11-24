@@ -3,6 +3,7 @@ package mysquare.core;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import javax.swing.*;
 
 public class IMStart {
@@ -16,8 +17,11 @@ public class IMStart {
 
 	IMStart(){
 		m2 = new JMenu("View");
+		m2.setMnemonic(KeyEvent.VK_V);
 		m3 = new JMenu("Operations");
+		m3.setMnemonic(KeyEvent.VK_O);
 		m4 = new JMenu("Help");
+		m4.setMnemonic(KeyEvent.VK_H);
 		m2i1 = new JMenuItem("Production");
 		m2i2 = new JMenuItem("Dispatch");
 		m2i3 = new JMenuItem("Stock");
