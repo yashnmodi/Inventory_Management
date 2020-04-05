@@ -1,9 +1,10 @@
 package mysquare.core;
 
+import org.json.JSONObject;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.sql.ResultSet;
+import java.util.ArrayList;
 
 public class Stock {
 
@@ -14,14 +15,19 @@ public class Stock {
         model.addColumn("COLOUR");
         model.addColumn("WEIGHT");
         model.addColumn("QUANTITY");
-        ResultSet data = null;
+
         try {
-            data = Db.fetchData("products");
-            while(data.next()) {
-                model.addRow(new Object[]{data.getString(1), data.getString(2), data.getString(3), data.getString(4)});
+            Db db = new Db();
+            ArrayList<JSONObject> jsonObjects = db.fetchData("Products");
+            for(JSONObject jsonObject : jsonObjects){
+                model.addRow(new Object[]{
+                        jsonObject.getString("name"),
+                        jsonObject.getString("clr"),
+                        jsonObject.getString("wt"),
+                        jsonObject.getInt("qty")});
             }
         } catch (Exception e) {
-            throw new Exception(e.getMessage());
+            new CustomException(e.getMessage());
         }
         table.setGridColor(new Color(239,214,186));
         return table;

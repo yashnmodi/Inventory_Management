@@ -1,182 +1,137 @@
 package mysquare.core;
 
-import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import com.mongodb.*;
+import com.mongodb.client.*;
+import org.bson.Document;
+import org.json.JSONObject;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 
 public class Db {
-	
-	private static Connection conn = null;
-	
-	private static Connection connect() {
-	    try {    
-	    	if(conn == null){
-	    	    //Class.forName("org.sqlite.JDBC");
-				Utility u =new Utility();
-	    	    HashMap<String, String> properties = u.getProperties();
-	            conn = DriverManager.getConnection(properties.get("dbDriver")+properties.get("dbSource"));
-	            System.out.println("Connection to Database has been established.");
-	        } 
-	    } catch (SQLException | IOException e) {
-	            System.out.println(e.getMessage());  
-	    }
-	    return conn;
-	}
-	
-	public static ResultSet fetchData(String tableName) throws SQLException {
-		ResultSet rs = null;
-		Connection conn = connect();
-		Statement stat = conn.createStatement();
-		if("products".equalsIgnoreCase(tableName))
-			rs = stat.executeQuery("SELECT * FROM "+tableName+" ORDER BY pname;");
-		else
-			rs = stat.executeQuery("SELECT * FROM "+tableName+" ORDER BY timestamp DESC;");
-		return rs;	
-	}
-	
-	public static void addItem(String table, String value) throws Exception {
-		Connection conn = connect();
-		Statement stat = conn.createStatement();
-		String sql = "INSERT INTO "+table+" VALUES ('"+value+"');";
-		stat.executeUpdate(sql);
+	private final String mongoURI = "mongodb+srv://YOUR-CONNECTION_STRING";
+	DateFormat dateFormat = new SimpleDateFormat("EEE dd-MMM-yyyy HH:mm");
+
+	public ArrayList<JSONObject> fetchData(String tableName) throws Exception {
+		ArrayList<JSONObject> jsonList = new ArrayList<>();
+		MongoClient mongoClient = MongoClients.create(mongoURI);
+		MongoDatabase database = mongoClient.getDatabase("YOUR_DB_NAME");
+		MongoCollection collection = database.getCollection(tableName);
+		FindIterable<Document> findIterable = collection.find(new Document()).sort(new BasicDBObject("name", 1));
+		MongoCursor<Document> cursor = findIterable.iterator();
+		while (cursor.hasNext()) {
+			jsonList.add(new JSONObject(cursor.next().toJson()));
+		}
+		System.out.println("JSON - " + jsonList.toString());
+		mongoClient.close();
+		return jsonList;
 	}
 
-	public static void removeItem(String table, String columnName, String value) throws Exception {
-		Connection conn = connect();
-		Statement stat = conn.createStatement();
-		String sql = " DELETE FROM "+table+" WHERE "+columnName+"='"+value+"';";
-		stat.executeUpdate(sql);
+	public void addItem(String type, String value) throws Exception {
+		MongoClient mongoClient = MongoClients.create(mongoURI);
+		MongoDatabase database = mongoClient.getDatabase("YOUR_DB_NAME");
+		MongoCollection collection = database.getCollection("Catalogue");
+		Document updates = new Document("$push", new Document(type, value));
+		collection.updateOne(new Document(), updates);
+		mongoClient.close();
 	}
-	
-	public static ResultSet addProduct(String product, String colour, String weight, int qty) throws Exception{
-		Connection conn = connect();
-		ResultSet rs = null;
-		PreparedStatement ps1 = conn.prepareStatement("SELECT * FROM products WHERE pname=? AND pclr=? AND pwt=?;");
-		ps1.setString(1, product);
-		ps1.setString(2, colour);
-		ps1.setString(3, weight);
-		rs = ps1.executeQuery();
-	          
-		if (rs.next() == false) {
-			PreparedStatement ps2 = conn.prepareStatement("INSERT INTO products VALUES (?,?,?,?);");
-			ps2.setString(1, product);
-			ps2.setString(2, colour);
-			ps2.setString(3, weight);
-			ps2.setInt(4, qty);
-			ps2.executeUpdate();	
+
+	public void removeItem(String type, String value) throws Exception {
+		MongoClient mongoClient = MongoClients.create(mongoURI);
+		MongoDatabase database = mongoClient.getDatabase("YOUR_DB_NAME");
+		MongoCollection collection = database.getCollection("Catalogue");
+		Document updates = new Document("$pull", new Document(type, value));
+		collection.updateOne(new Document(), updates);
+		mongoClient.close();
+	}
+
+	public ArrayList<JSONObject> addProduct(String product, String colour, String weight, int qty) throws Exception {
+		MongoClient mongoClient = MongoClients.create(mongoURI);
+		MongoDatabase database = mongoClient.getDatabase("YOUR_DB_NAME");
+		MongoCollection collection = database.getCollection("Products");
+		Document filter = new Document("name", product);
+		filter.append("clr", colour).append("wt", weight);
+		FindIterable<Document> findIterable = collection.find(filter);
+		MongoCursor<Document> cursor = findIterable.iterator();
+		int availableQty = 0;
+		while (cursor.hasNext()) {
+			availableQty = cursor.next().getInteger("qty");
+		}
+		if (0 == availableQty) {
+			collection.insertOne(filter.append("qty", qty));
+			collection = database.getCollection("Manufactured");
+			filter.append("when", dateFormat.format(new Date()));
+			collection.insertOne(filter.append("qty", qty));
 		} else {
-			int updtdQty = Integer.parseInt(rs.getString("pqt")) + qty;
-			PreparedStatement ps3 = conn.prepareStatement("UPDATE products SET pqt=? WHERE pname=? AND pclr=? AND pwt=?;");
-			ps3.setInt(1, updtdQty);
-			ps3.setString(2, product);
-			ps3.setString(3, colour);
-			ps3.setString(4, weight);
-			ps3.executeUpdate();
+			int newQty = qty + availableQty;
+			collection.updateOne(filter, new Document("$set", new Document("qty", newQty)));
+			collection = database.getCollection("Manufactured");
+			filter.append("when", dateFormat.format(new Date()));
+			collection.insertOne(filter.append("qty", qty));
 		}
 
-		PreparedStatement ps4 = conn.prepareStatement("INSERT INTO prod_records VALUES (strftime('%d/%m/%Y %H:%M:%S','now','localtime'),?,?,?,?);");
-		ps4.setString(1, product);
-		ps4.setString(2, colour);
-		ps4.setString(3, weight);
-		ps4.setInt(4, qty);
-		ps4.executeUpdate();
-		Statement s1 = conn.createStatement();
-		rs = s1.executeQuery("SELECT * FROM prod_records ORDER BY timestamp DESC;");
-		
-		return rs;
+		ArrayList<JSONObject> jsonList = new ArrayList<>();
+		findIterable = collection.find(new Document());
+		cursor = findIterable.iterator();
+		while (cursor.hasNext()) {
+			jsonList.add(new JSONObject(cursor.next().toJson()));
+		}
+		mongoClient.close();
+		return jsonList;
 	}
-	
-	public static ResultSet sellProduct(String product, String colour, String weight, int qty) throws Exception{
-		Connection conn = connect();
-		ResultSet rs = null;
-		
-		PreparedStatement ps1 = conn.prepareStatement("SELECT * FROM products WHERE pname=? AND pclr=? AND pwt=?;");
-        ps1.setString(1, product);
-		ps1.setString(2, colour);
-		ps1.setString(3, weight);
-		rs = ps1.executeQuery();
-			
-		if (rs == null) {
+
+	public ArrayList<JSONObject> sellProduct(String product, String colour, String weight, int qty) throws Exception {
+
+		MongoClient mongoClient = MongoClients.create(mongoURI);
+		MongoDatabase database = mongoClient.getDatabase("YOUR_DB_NAME");
+		MongoCollection collection = database.getCollection("Products");
+		Document filter = new Document("name", product);
+		filter.append("clr", colour).append("wt", weight);
+		FindIterable<Document> findIterable = collection.find(filter);
+		MongoCursor<Document> cursor = findIterable.iterator();
+		int availableQty = 0;
+		if (cursor.hasNext()) {
+			availableQty = cursor.next().getInteger("qty");
+			availableQty -= qty;
+			if (availableQty <= 0) {
+				collection.deleteOne(filter);
+				collection = database.getCollection("Dispatched");
+				filter.append("qty", qty).append("when", dateFormat.format(new Date()));
+				collection.insertOne(filter);
+			} else {
+				collection.updateOne(filter, new Document("$set", new Document("qty", availableQty)));
+				collection = database.getCollection("Dispatched");
+				filter.append("qty", qty).append("when", dateFormat.format(new Date()));
+				collection.insertOne(filter);
+			}
+
+		} else {
 			System.out.println("Product Not Found!");
-		} else {
-			int updtdQty = Integer.parseInt(rs.getString("pqt")) - qty;
-			PreparedStatement ps2 = conn.prepareStatement("UPDATE products SET pqt=? WHERE pname=? AND pclr=? AND pwt=?;");
-			ps2.setInt(1, updtdQty);
-			ps2.setString(2, product);
-			ps2.setString(3, colour);
-			ps2.setString(4, weight);
-			ps2.executeUpdate();
 		}
 
-		PreparedStatement ps3 = conn.prepareStatement("INSERT INTO sold_records VALUES (strftime('%d/%m/%Y %H:%M:%S','now','localtime'),?,?,?,?);");
-		ps3.setString(1, product);
-		ps3.setString(2, colour);
-		ps3.setString(3, weight);
-		ps3.setInt(4, qty);
-		ps3.executeUpdate();
-		Statement s1 = conn.createStatement();
-		rs = s1.executeQuery("SELECT * FROM sold_records ORDER BY timestamp DESC;");
-	
-		return rs;
-	}
-	
-	public static ArrayList<String> fetchPList() {
-		ResultSet rs = null;
-		Connection conn = connect();
-		ArrayList<String> pal = new ArrayList<String>();
-		
-		try {
-			Statement s1 = conn.createStatement();
-			rs = s1.executeQuery("SELECT * FROM product_list ORDER BY pname;");
-			while(rs.next() != false) {
-				pal.add(rs.getString("pname"));
-			}
-		} catch (SQLException e) {
-			System.out.println(e.getMessage());
+		ArrayList<JSONObject> jsonList = new ArrayList<>();
+		findIterable = collection.find(new Document());
+		cursor = findIterable.iterator();
+		while (cursor.hasNext()) {
+			jsonList.add(new JSONObject(cursor.next().toJson()));
 		}
-		
-		return pal;
+		mongoClient.close();
+		return jsonList;
 	}
-	
-	public static ArrayList<String> fetchCList() {
-		ResultSet rs = null;
-		Connection conn = connect();
-		ArrayList<String> cal = new ArrayList<String>();
-		
-		try {
-			Statement s1 = conn.createStatement();
-			rs = s1.executeQuery("SELECT * FROM colour_list ORDER BY pclr;");
-			while(rs.next() != false) {
-				cal.add(rs.getString("pclr"));
-			}
-		} catch (SQLException e) {
-			System.out.println(e.getMessage());
+
+	public JSONObject fetchCatalogue() {
+		JSONObject jsonObject = null;
+		MongoClient mongoClient = MongoClients.create(mongoURI);
+		MongoDatabase database = mongoClient.getDatabase("YOUR_DB_NAME");
+		MongoCollection collection = database.getCollection("Catalogue");
+		FindIterable<Document> findIterable = collection.find(new Document());
+		MongoCursor<Document> cursor = findIterable.iterator();
+		while (cursor.hasNext()) {
+			jsonObject = new JSONObject(cursor.next().toJson());
 		}
-		
-		return cal;
-	}
-	
-	public static ArrayList<String> fetchWList() {
-		ResultSet rs = null;
-		Connection conn = connect();
-		ArrayList<String> wal = new ArrayList<String>();
-		
-		try {
-			Statement s1 = conn.createStatement();
-			rs = s1.executeQuery("SELECT * FROM weight_list ORDER BY pwt;");
-			while(rs.next() != false) {
-				wal.add(rs.getString("pwt"));
-			}
-		} catch (SQLException e) {
-			System.out.println(e.getMessage());
-		}
-		
-		return wal;
+		mongoClient.close();
+		return jsonObject;
 	}
 }

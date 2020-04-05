@@ -1,6 +1,7 @@
 mysquare\core\Dispatch.class
 mysquare\core\Stock.class
 mysquare\core\Utility.class
+mysquare\core\CustomException.class
 mysquare\core\ModifyProducts.class
 mysquare\core\Production.class
 mysquare\core\IMStart.class

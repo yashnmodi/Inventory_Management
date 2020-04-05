@@ -34,7 +34,7 @@ public class Utility {
 		return properties;
 	}
 
-	public String[] getProductList() {
+	/*public String[] getProductList() {
 		ArrayList<String> productList = Db.fetchPList();
 	    String[] productArr = productList.toArray(new String[productList.size()]);
 	    return productArr;
@@ -50,5 +50,5 @@ public class Utility {
 		ArrayList<String> weightList = Db.fetchWList();
 		String[] weightArr = weightList.toArray(new String[weightList.size()]);
 		return weightArr;
-	}
+	}*/
 }
