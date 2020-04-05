@@ -1,4 +1,13 @@
 # Inventory_Management
+
+Version 2.0.0
+Built on April 5th, 2020.
+
+## Features:
+-> Database powered by MongoDb.
+
+-> Removed sqlite3. No more manual handling of Db.
+
 Version 1.0.2
 Built on November 10th, 2019.
 
