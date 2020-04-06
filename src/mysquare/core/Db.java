@@ -11,13 +11,13 @@ import java.util.Date;
 import java.util.HashMap;
 
 public class Db {
-	private final String mongoURI = "mongodb+srv://YOUR-CONNECTION_STRING";
-	DateFormat dateFormat = new SimpleDateFormat("EEE dd-MMM-yyyy HH:mm");
+	private final String mongoURI = "mongodb+srv://yash:admin@dataone-iedyp.mongodb.net/rbp?retryWrites=true&w=majority";
+	DateFormat dateFormat = new SimpleDateFormat("dd-MMM-yyyy");
 
 	public ArrayList<JSONObject> fetchData(String tableName, Document query) throws Exception {
 		ArrayList<JSONObject> jsonList = new ArrayList<>();
 		MongoClient mongoClient = MongoClients.create(mongoURI);
-		MongoDatabase database = mongoClient.getDatabase("YOUR_DB_NAME");
+		MongoDatabase database = mongoClient.getDatabase(ApplicationConstants.DATABASE);
 		MongoCollection collection = database.getCollection(tableName);
 		FindIterable<Document> findIterable = collection.find(query).sort(new BasicDBObject("name", 1));
 		MongoCursor<Document> cursor = findIterable.iterator();
@@ -30,8 +30,8 @@ public class Db {
 
 	public void addItem(String type, String value) throws Exception {
 		MongoClient mongoClient = MongoClients.create(mongoURI);
-		MongoDatabase database = mongoClient.getDatabase("YOUR_DB_NAME");
-		MongoCollection collection = database.getCollection("Catalogue");
+		MongoDatabase database = mongoClient.getDatabase(ApplicationConstants.DATABASE);
+		MongoCollection collection = database.getCollection(ApplicationConstants.CATALOGUE);
 		Document updates = new Document("$push", new Document(type, value));
 		collection.updateOne(new Document(), updates);
 		mongoClient.close();
@@ -39,8 +39,8 @@ public class Db {
 
 	public void removeItem(String type, String value) throws Exception {
 		MongoClient mongoClient = MongoClients.create(mongoURI);
-		MongoDatabase database = mongoClient.getDatabase("YOUR_DB_NAME");
-		MongoCollection collection = database.getCollection("Catalogue");
+		MongoDatabase database = mongoClient.getDatabase(ApplicationConstants.DATABASE);
+		MongoCollection collection = database.getCollection(ApplicationConstants.CATALOGUE);
 		Document updates = new Document("$pull",new Document(type,value));
 		collection.updateOne(new Document(),updates);
 		mongoClient.close();
@@ -48,8 +48,8 @@ public class Db {
 
 	public ArrayList<JSONObject> addProduct(String product, String colour, String weight, int qty, String type) throws Exception{
 		MongoClient mongoClient = MongoClients.create(mongoURI);
-		MongoDatabase database = mongoClient.getDatabase("YOUR_DB_NAME");
-		MongoCollection collection = database.getCollection("Products");
+		MongoDatabase database = mongoClient.getDatabase(ApplicationConstants.DATABASE);
+		MongoCollection collection = database.getCollection(ApplicationConstants.PRODUCTS);
 		Document filter = new Document("name",product);
 		filter.append("clr",colour).append("wt",weight);
 		FindIterable<Document> findIterable = collection.find(filter);
@@ -60,13 +60,13 @@ public class Db {
 		}
 		if(0 == availableQty){
 			collection.insertOne(filter.append("qty",qty).append("type",type));
-			collection = database.getCollection("Manufactured");
+			collection = database.getCollection(ApplicationConstants.MANUFACTURED);
 			filter.append("when",dateFormat.format(new Date()));
 			collection.insertOne(filter.append("qty",qty).append("type",type));
 		} else {
 			int newQty = qty + availableQty;
 			collection.updateOne(filter, new Document("$set",new Document("qty",newQty).append("type",type)));
-			collection = database.getCollection("Manufactured");
+			collection = database.getCollection(ApplicationConstants.MANUFACTURED);
 			filter.append("when",dateFormat.format(new Date()));
 			collection.insertOne(filter.append("qty",qty).append("type",type));
 		}
@@ -84,8 +84,8 @@ public class Db {
 	public ArrayList<JSONObject> sellProduct(String product, String colour, String weight, int qty, String type) throws Exception{
 
 		MongoClient mongoClient = MongoClients.create(mongoURI);
-		MongoDatabase database = mongoClient.getDatabase("YOUR_DB_NAME");
-		MongoCollection collection = database.getCollection("Products");
+		MongoDatabase database = mongoClient.getDatabase(ApplicationConstants.DATABASE);
+		MongoCollection collection = database.getCollection(ApplicationConstants.PRODUCTS);
 		Document filter = new Document("name",product);
 		filter.append("clr",colour).append("wt",weight);
 		FindIterable<Document> findIterable = collection.find(filter);
@@ -96,12 +96,12 @@ public class Db {
 			availableQty -= qty;
 			if(availableQty <= 0){
 				collection.deleteOne(filter);
-				collection = database.getCollection("Dispatched");
+				collection = database.getCollection(ApplicationConstants.DISPATCHED);
 				filter.append("qty",qty).append("when",dateFormat.format(new Date())).append("type",type);
 				collection.insertOne(filter);
 			} else{
 				collection.updateOne(filter, new Document("$set",new Document("qty",availableQty).append("type",type)));
-				collection = database.getCollection("Dispatched");
+				collection = database.getCollection(ApplicationConstants.DISPATCHED);
 				filter.append("qty",qty).append("when",dateFormat.format(new Date())).append("type",type);
 				collection.insertOne(filter);
 			}
@@ -123,8 +123,8 @@ public class Db {
 	public JSONObject fetchCatalogue() {
 		JSONObject jsonObject = null;
 		MongoClient mongoClient = MongoClients.create(mongoURI);
-		MongoDatabase database = mongoClient.getDatabase("YOUR_DB_NAME");
-		MongoCollection collection = database.getCollection("Catalogue");
+		MongoDatabase database = mongoClient.getDatabase(ApplicationConstants.DATABASE);
+		MongoCollection collection = database.getCollection(ApplicationConstants.CATALOGUE);
 		FindIterable<Document> findIterable = collection.find(new Document()).sort(new BasicDBObject("name",1));
 		MongoCursor<Document> cursor = findIterable.iterator();
 		while (cursor.hasNext()){

@@ -9,24 +9,23 @@ import java.util.ArrayList;
 
 public class Stock {
 
-    public static JTable getStockView(String viewName) throws Exception{
+    public static JTable getStockView(Document query) throws Exception{
         DefaultTableModel model = new DefaultTableModel();
         JTable table = new JTable(model);
-        model.addColumn("PRODUCT");
-        model.addColumn("COLOUR");
-        model.addColumn("WEIGHT");
-        model.addColumn("QUANTITY");
+        model.addColumn(ApplicationConstants.PRODUCT);
+        model.addColumn(ApplicationConstants.COLOUR);
+        model.addColumn(ApplicationConstants.WEIGHT);
+        model.addColumn(ApplicationConstants.QUANTITY);
 
         try {
             Db db = new Db();
-            Document query = new Document("type",viewName);
-            ArrayList<JSONObject> jsonObjects = db.fetchData("Products",query);
+            ArrayList<JSONObject> jsonObjects = db.fetchData(ApplicationConstants.PRODUCTS,query);
             for(JSONObject jsonObject : jsonObjects){
                 model.addRow(new Object[]{
-                        jsonObject.getString("name"),
-                        jsonObject.getString("clr"),
-                        jsonObject.getString("wt"),
-                        jsonObject.getInt("qty")});
+                        jsonObject.getString(ApplicationConstants.COL_NAME),
+                        jsonObject.getString(ApplicationConstants.COL_COLOUR),
+                        jsonObject.getString(ApplicationConstants.COL_WEIGHT),
+                        jsonObject.getInt(ApplicationConstants.COL_QUANTITY)});
             }
         } catch (Exception e) {
             new CustomException(e.getMessage());
