@@ -12,6 +12,7 @@ public class Stock {
     public static JTable getStockView(Document query) throws Exception{
         DefaultTableModel model = new DefaultTableModel();
         JTable table = new JTable(model);
+        table.setEnabled(false);
         model.addColumn(ApplicationConstants.PRODUCT);
         model.addColumn(ApplicationConstants.COLOUR);
         model.addColumn(ApplicationConstants.WEIGHT);

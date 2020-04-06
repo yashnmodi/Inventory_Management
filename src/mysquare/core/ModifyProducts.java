@@ -44,7 +44,7 @@ public class ModifyProducts {
         addProduct.addActionListener(e -> {
             try {
                 Db db = new Db();
-                db.addItem("bottles",product.getText());
+                db.addItem(ApplicationConstants.BOTTLES,product.getText());
                 product.setText("");
             } catch (Exception err) {
                 JOptionPane.showConfirmDialog(IMStart.frame, "Product already added.\nERROR:"+err.getMessage(),"WARNING",JOptionPane.WARNING_MESSAGE );
@@ -53,7 +53,7 @@ public class ModifyProducts {
         addColour.addActionListener(e -> {
             try {
                 Db db = new Db();
-                db.addItem("colours",colour.getText());
+                db.addItem(ApplicationConstants.COL_COLOURS,colour.getText());
                 colour.setText("");
             } catch (Exception err) {
                 JOptionPane.showConfirmDialog(IMStart.frame, "Colour already added.\nERROR:"+err.getMessage(),"WARNING",JOptionPane.WARNING_MESSAGE );
@@ -62,7 +62,7 @@ public class ModifyProducts {
         addWeight.addActionListener(e -> {
             try {
                 Db db = new Db();
-                db.addItem("weights",weight.getText());
+                db.addItem(ApplicationConstants.COL_WEIGHTS,weight.getText());
                 weight.setText("");
             } catch (Exception err) {
                 JOptionPane.showConfirmDialog(IMStart.frame, "Weight already added.\nERROR:"+err.getMessage(),"WARNING",JOptionPane.WARNING_MESSAGE );
@@ -71,7 +71,7 @@ public class ModifyProducts {
         rmvProduct.addActionListener(e -> {
             try {
                 Db db = new Db();
-                db.removeItem("bottles",product.getText());
+                db.removeItem(ApplicationConstants.BOTTLES,product.getText());
                 product.setText("");
             } catch (Exception err) {
                 JOptionPane.showConfirmDialog(IMStart.frame, "Product not found.\nERROR:"+err.getMessage(),"WARNING",JOptionPane.WARNING_MESSAGE );
@@ -80,7 +80,7 @@ public class ModifyProducts {
         rmvColour.addActionListener(e -> {
             try {
                 Db db = new Db();
-                db.removeItem("colours",colour.getText());
+                db.removeItem(ApplicationConstants.COL_COLOURS,colour.getText());
                 colour.setText("");
             } catch (Exception err) {
                 JOptionPane.showConfirmDialog(IMStart.frame, "Colour not found.\nERROR:"+err.getMessage(),"WARNING",JOptionPane.WARNING_MESSAGE );
@@ -89,7 +89,7 @@ public class ModifyProducts {
         rmvWeight.addActionListener(e -> {
             try {
                 Db db = new Db();
-                db.removeItem("weights",weight.getText());
+                db.removeItem(ApplicationConstants.COL_WEIGHTS,weight.getText());
                 weight.setText("");
             } catch (Exception err) {
                 JOptionPane.showConfirmDialog(IMStart.frame, "Weight not found.\nERROR:"+err.getMessage(),"WARNING",JOptionPane.WARNING_MESSAGE );

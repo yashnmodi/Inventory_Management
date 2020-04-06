@@ -47,32 +47,37 @@ public class Db {
 	}
 
 	public ArrayList<JSONObject> addProduct(String product, String colour, String weight, int qty, String type) throws Exception{
+		Document query = new Document(
+				ApplicationConstants.COL_NAME,product)
+				.append(ApplicationConstants.COL_COLOUR,colour)
+				.append(ApplicationConstants.COL_WEIGHT,weight)
+				.append(ApplicationConstants.COL_TYPE,type);
 		MongoClient mongoClient = MongoClients.create(mongoURI);
 		MongoDatabase database = mongoClient.getDatabase(ApplicationConstants.DATABASE);
 		MongoCollection collection = database.getCollection(ApplicationConstants.PRODUCTS);
-		Document filter = new Document("name",product);
-		filter.append("clr",colour).append("wt",weight);
-		FindIterable<Document> findIterable = collection.find(filter);
+		FindIterable<Document> findIterable = collection.find(query);
 		MongoCursor<Document> cursor = findIterable.iterator();
 		int availableQty = 0;
 		while (cursor.hasNext()){
 			availableQty = cursor.next().getInteger("qty");
 		}
 		if(0 == availableQty){
-			collection.insertOne(filter.append("qty",qty).append("type",type));
+			query.append(ApplicationConstants.COL_QUANTITY,qty);
+			collection.insertOne(query);
 			collection = database.getCollection(ApplicationConstants.MANUFACTURED);
-			filter.append("when",dateFormat.format(new Date()));
-			collection.insertOne(filter.append("qty",qty).append("type",type));
+			query.append(ApplicationConstants.COL_DATE,dateFormat.format(new Date()));
+			collection.insertOne(query);
 		} else {
 			int newQty = qty + availableQty;
-			collection.updateOne(filter, new Document("$set",new Document("qty",newQty).append("type",type)));
+			Document updated = new Document(ApplicationConstants.COL_QUANTITY,newQty).append(ApplicationConstants.COL_TYPE,type);
+			collection.updateOne(query, new Document("$set",updated));
 			collection = database.getCollection(ApplicationConstants.MANUFACTURED);
-			filter.append("when",dateFormat.format(new Date()));
-			collection.insertOne(filter.append("qty",qty).append("type",type));
+			query.append(ApplicationConstants.COL_DATE,dateFormat.format(new Date()));
+			collection.insertOne(query);
 		}
 
 		ArrayList<JSONObject> jsonList = new ArrayList<>();
-		findIterable = collection.find(new Document());
+		findIterable = collection.find(new Document(ApplicationConstants.COL_TYPE,type));
 		cursor = findIterable.iterator();
 		while (cursor.hasNext()){
 			jsonList.add(new JSONObject(cursor.next().toJson()));
@@ -82,36 +87,36 @@ public class Db {
 	}
 
 	public ArrayList<JSONObject> sellProduct(String product, String colour, String weight, int qty, String type) throws Exception{
-
+		Document query = new Document(ApplicationConstants.COL_NAME,product)
+				.append(ApplicationConstants.COL_COLOUR,colour)
+				.append(ApplicationConstants.COL_WEIGHT,weight)
+				.append(ApplicationConstants.COL_TYPE,type);
 		MongoClient mongoClient = MongoClients.create(mongoURI);
 		MongoDatabase database = mongoClient.getDatabase(ApplicationConstants.DATABASE);
 		MongoCollection collection = database.getCollection(ApplicationConstants.PRODUCTS);
-		Document filter = new Document("name",product);
-		filter.append("clr",colour).append("wt",weight);
-		FindIterable<Document> findIterable = collection.find(filter);
+		FindIterable<Document> findIterable = collection.find(query);
 		MongoCursor<Document> cursor = findIterable.iterator();
-		int availableQty = 0;
+//		int availableQty = 0;
 		if (cursor.hasNext()){
-			availableQty = cursor.next().getInteger("qty");
+			int availableQty = cursor.next().getInteger(ApplicationConstants.COL_QUANTITY);
 			availableQty -= qty;
-			if(availableQty <= 0){
-				collection.deleteOne(filter);
-				collection = database.getCollection(ApplicationConstants.DISPATCHED);
-				filter.append("qty",qty).append("when",dateFormat.format(new Date())).append("type",type);
-				collection.insertOne(filter);
-			} else{
-				collection.updateOne(filter, new Document("$set",new Document("qty",availableQty).append("type",type)));
-				collection = database.getCollection(ApplicationConstants.DISPATCHED);
-				filter.append("qty",qty).append("when",dateFormat.format(new Date())).append("type",type);
-				collection.insertOne(filter);
-			}
-
+//			if(availableQty <= 0){
+//				collection.deleteOne(filter);
+//				collection = database.getCollection(ApplicationConstants.DISPATCHED);
+//				filter.append("qty",qty).append("when",dateFormat.format(new Date())).append("type",type);
+//				collection.insertOne(filter);
+//			} else{}
+			Document updated = new Document(ApplicationConstants.COL_QUANTITY,availableQty).append(ApplicationConstants.COL_TYPE,type);
+			collection.updateOne(query, new Document("$set",updated));
+			collection = database.getCollection(ApplicationConstants.DISPATCHED);
+			query.append(ApplicationConstants.COL_DATE,dateFormat.format(new Date()));
+			collection.insertOne(query);
 		} else{
 			System.out.println("Product Not Found!");
 		}
 
 		ArrayList<JSONObject> jsonList = new ArrayList<>();
-		findIterable = collection.find(new Document());
+		findIterable = collection.find(new Document(ApplicationConstants.COL_TYPE,type));
 		cursor = findIterable.iterator();
 		while (cursor.hasNext()){
 			jsonList.add(new JSONObject(cursor.next().toJson()));

@@ -6,8 +6,6 @@ import org.json.JSONObject;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 public class Production {
@@ -17,6 +15,7 @@ public class Production {
     public static JTable getProductionView(Document query) throws Exception{
         model = new DefaultTableModel();
         JTable table = new JTable(model);
+        table.setEnabled(false);
         model.addColumn(ApplicationConstants.MANUFACTURED_DATE);
         model.addColumn(ApplicationConstants.PRODUCT);
         model.addColumn(ApplicationConstants.COLOUR);
@@ -28,11 +27,11 @@ public class Production {
             ArrayList<JSONObject> jsonObjects = db.fetchData("Manufactured",query);
             for(JSONObject jsonObject : jsonObjects){
                 model.addRow(new Object[]{
-                        jsonObject.getString("when"),
-                        jsonObject.getString("name"),
-                        jsonObject.getString("clr"),
-                        jsonObject.getString("wt"),
-                        jsonObject.getInt("qty")});
+                        jsonObject.getString(ApplicationConstants.COL_DATE),
+                        jsonObject.getString(ApplicationConstants.COL_NAME),
+                        jsonObject.getString(ApplicationConstants.COL_COLOUR),
+                        jsonObject.getString(ApplicationConstants.COL_WEIGHT),
+                        jsonObject.getInt(ApplicationConstants.COL_QUANTITY)});
             }
         } catch (Exception e) {
             new CustomException(e.getMessage());
@@ -41,7 +40,7 @@ public class Production {
         return table;
     }
 
-    public static JPanel getProductionPanel() throws Exception{
+    public static JPanel getProductionPanel(String productType) throws Exception{
         JPanel panel = new JPanel();
         Db db = new Db();
         JSONObject jsonObject = db.fetchCatalogue();
@@ -74,7 +73,7 @@ public class Production {
         panel.add(lab4);
         panel.add(tf1);
 
-        JLabel lab5 = new JLabel("Shift");
+        JLabel lab5 = new JLabel("SHIFT");
         panel.add(lab5);
         panel.add(cb5);
 
@@ -86,11 +85,10 @@ public class Production {
             String colour = cb2.getSelectedItem().toString();
             String weight = cb3.getSelectedItem().toString();
             int qty = Integer.parseInt(tf1.getText());
-            String productType = cb5.getSelectedItem().toString();
+//            String productType = cb5.getSelectedItem().toString();
             try {
                 model.setRowCount(0);
-                Db db1 = new Db();
-                ArrayList<JSONObject> jsonObjects = db1.addProduct(product, colour, weight, qty, productType);
+                ArrayList<JSONObject> jsonObjects = db.addProduct(product, colour, weight, qty, productType);
                 for(JSONObject jsonObject1 : jsonObjects){
                     model.addRow(new Object[]{
                             jsonObject1.getString(ApplicationConstants.COL_DATE),

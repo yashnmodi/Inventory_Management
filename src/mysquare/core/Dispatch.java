@@ -23,6 +23,7 @@ public class Dispatch {
     public static JTable getDispatchView(Document query) throws Exception{
         model = new DefaultTableModel();
         JTable table = new JTable(model);
+        table.setEnabled(false);
         model.addColumn(ApplicationConstants.DISPATCHED_DATE);
         model.addColumn(ApplicationConstants.PRODUCT);
         model.addColumn(ApplicationConstants.COLOUR);
@@ -34,11 +35,11 @@ public class Dispatch {
             ArrayList<JSONObject> jsonObjects = db.fetchData(ApplicationConstants.DISPATCHED,query);
             for(JSONObject jsonObject : jsonObjects){
                 model.addRow(new Object[]{
-                        jsonObject.getString("when"),
-                        jsonObject.getString("name"),
-                        jsonObject.getString("clr"),
-                        jsonObject.getString("wt"),
-                        jsonObject.getInt("qty")});
+                        jsonObject.getString(ApplicationConstants.COL_DATE),
+                        jsonObject.getString(ApplicationConstants.COL_NAME),
+                        jsonObject.getString(ApplicationConstants.COL_COLOUR),
+                        jsonObject.getString(ApplicationConstants.COL_WEIGHT),
+                        jsonObject.getInt(ApplicationConstants.COL_QUANTITY)});
             }
         } catch (Exception e) {
             new CustomException(e.getMessage());
@@ -47,7 +48,7 @@ public class Dispatch {
         return table;
     }
 
-    public static JPanel getDispatchPanel(){
+    public static JPanel getDispatchPanel(String productType){
         JPanel panel = new JPanel();
         Db db = new Db();
         JSONObject jsonObject = db.fetchCatalogue();
@@ -60,7 +61,7 @@ public class Dispatch {
         JComboBox<String> cb1 = new JComboBox<>(products);
         JComboBox<String> cb2 = new JComboBox<>(colours);
         JComboBox<String> cb3 = new JComboBox<>(weights);
-        JComboBox<String> cb5 = new JComboBox<>(new String[]{"Bottles","Caps"});
+        JComboBox<String> cb5 = new JComboBox<>(new String[]{"Day","Night"});
 
         // Components Added using Flow Layout
         JLabel lab1 = new JLabel(ApplicationConstants.PRODUCT);
@@ -80,7 +81,7 @@ public class Dispatch {
         panel.add(lab4);
         panel.add(tf1);
 
-        JLabel lab5 = new JLabel("Shift");
+        JLabel lab5 = new JLabel("SHIFT");
         panel.add(lab5);
         panel.add(cb5);
 
@@ -92,7 +93,7 @@ public class Dispatch {
             String colour = cb2.getSelectedItem().toString();
             String weight = cb3.getSelectedItem().toString();
             int qty = Integer.parseInt(tf1.getText());
-            String productType = cb5.getSelectedItem().toString();
+//            String productType = cb5.getSelectedItem().toString();
             try {
                 model.setRowCount(0);
                 Db db1 = new Db();

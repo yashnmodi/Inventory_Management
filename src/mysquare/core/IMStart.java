@@ -3,8 +3,6 @@ package mysquare.core;
 import org.bson.Document;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import javax.swing.*;
 
@@ -12,10 +10,9 @@ public class IMStart {
 	
 	public static JFrame frame = new JFrame();
 	public static JMenuBar mb = new JMenuBar();
-	public static JMenu m1,m2,m3,m4, m2i1, m2i2;
+	public static JMenu m2,m3,m4, m2i1, m2i2;
 	public static JMenuItem m3i1, m4i1, m2i1si1, m2i1si2, m2i1si3, m2i2si1, m2i2si2, m2i2si3;
 	public static JScrollPane jScrollPane;
-	public static JToolBar toolBar;
 
 
 	IMStart(){
@@ -85,7 +82,7 @@ public class IMStart {
                     frame.getContentPane().removeAll();
                     jScrollPane = new JScrollPane(Production.getProductionView(query1));
                     frame.getContentPane().add(BorderLayout.CENTER, jScrollPane);
-                    frame.getContentPane().add(BorderLayout.SOUTH, Production.getProductionPanel());
+                    frame.getContentPane().add(BorderLayout.SOUTH, Production.getProductionPanel(ApplicationConstants.BOTTLES));
                     frame.getContentPane().doLayout();
                     frame.update(frame.getGraphics());
                     frame.setVisible(true);
@@ -99,7 +96,7 @@ public class IMStart {
                     frame.getContentPane().removeAll();
                     jScrollPane = new JScrollPane(Dispatch.getDispatchView(query1));
                     frame.getContentPane().add(BorderLayout.CENTER, jScrollPane);
-                    frame.getContentPane().add(BorderLayout.SOUTH, Dispatch.getDispatchPanel());
+                    frame.getContentPane().add(BorderLayout.SOUTH, Dispatch.getDispatchPanel(ApplicationConstants.BOTTLES));
                     frame.getContentPane().doLayout();
                     frame.update(frame.getGraphics());
                     frame.setVisible(true);
@@ -126,7 +123,7 @@ public class IMStart {
                     frame.getContentPane().removeAll();
                     jScrollPane = new JScrollPane(Production.getProductionView(query2));
                     frame.getContentPane().add(BorderLayout.CENTER, jScrollPane);
-                    frame.getContentPane().add(BorderLayout.SOUTH, Production.getProductionPanel());
+                    frame.getContentPane().add(BorderLayout.SOUTH, Production.getProductionPanel(ApplicationConstants.CAPS));
                     frame.getContentPane().doLayout();
                     frame.update(frame.getGraphics());
                     frame.setVisible(true);
@@ -140,7 +137,7 @@ public class IMStart {
                     frame.getContentPane().removeAll();
                     jScrollPane = new JScrollPane(Dispatch.getDispatchView(query2));
                     frame.getContentPane().add(BorderLayout.CENTER, jScrollPane);
-                    frame.getContentPane().add(BorderLayout.SOUTH, Dispatch.getDispatchPanel());
+                    frame.getContentPane().add(BorderLayout.SOUTH, Dispatch.getDispatchPanel(ApplicationConstants.CAPS));
                     frame.getContentPane().doLayout();
                     frame.update(frame.getGraphics());
                     frame.setVisible(true);
