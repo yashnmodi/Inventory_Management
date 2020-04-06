@@ -31,7 +31,8 @@ public class Dispatch {
 
         try {
             Db db = new Db();
-            ArrayList<JSONObject> jsonObjects = db.fetchData("Dispatched");
+            Document query = new Document();
+            ArrayList<JSONObject> jsonObjects = db.fetchData("Dispatched",query);
             for(JSONObject jsonObject : jsonObjects){
                 model.addRow(new Object[]{
                         jsonObject.getString("when"),
@@ -60,6 +61,7 @@ public class Dispatch {
         JComboBox<String> cb1 = new JComboBox<String>(products);
         JComboBox<String> cb2 = new JComboBox<String>(colours);
         JComboBox<String> cb3 = new JComboBox<String>(weights);
+        JComboBox<String> cb5 = new JComboBox<String>(new String[]{"Bottles","Caps"});
 
         // Components Added using Flow Layout
         JLabel lab1 = new JLabel("Product");
@@ -79,6 +81,10 @@ public class Dispatch {
         panel.add(lab4);
         panel.add(tf1);
 
+        JLabel lab5 = new JLabel("Type");
+        panel.add(lab5);
+        panel.add(cb5);
+
         JButton rmvBtn = new JButton("Remove");
         panel.add(rmvBtn);
 
@@ -89,9 +95,10 @@ public class Dispatch {
                 String colour = cb2.getSelectedItem().toString();
                 String weight = cb3.getSelectedItem().toString();
                 int qty = Integer.parseInt(tf1.getText());
+                String productType = cb5.getSelectedItem().toString();
                 try {
                     Db db = new Db();
-                    ArrayList<JSONObject> jsonObjects = db.sellProduct(product, colour, weight, qty);
+                    ArrayList<JSONObject> jsonObjects = db.sellProduct(product, colour, weight, qty, productType);
                     for(JSONObject jsonObject : jsonObjects){
                         model.addRow(new Object[]{
                                 jsonObject.getString("when"),

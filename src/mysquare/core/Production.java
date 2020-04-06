@@ -1,5 +1,6 @@
 package mysquare.core;
 
+import org.bson.Document;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import javax.swing.*;
@@ -24,7 +25,8 @@ public class Production {
 
         try {
             Db db = new Db();
-            ArrayList<JSONObject> jsonObjects = db.fetchData("Manufactured");
+            Document query = new Document();
+            ArrayList<JSONObject> jsonObjects = db.fetchData("Manufactured",query);
             for(JSONObject jsonObject : jsonObjects){
                 model.addRow(new Object[]{
                         jsonObject.getString("when"),
@@ -53,6 +55,7 @@ public class Production {
         JComboBox<String> cb1 = new JComboBox<String>(products);
         JComboBox<String> cb2 = new JComboBox<String>(colours);
         JComboBox<String> cb3 = new JComboBox<String>(weights);
+        JComboBox<String> cb5 = new JComboBox<String>(new String[]{"Bottles","Caps"});
 
         // Components Added using Flow Layout
         JLabel lab1 = new JLabel("Product");
@@ -72,6 +75,10 @@ public class Production {
         panel.add(lab4);
         panel.add(tf1);
 
+        JLabel lab5 = new JLabel("Type");
+        panel.add(lab5);
+        panel.add(cb5);
+
         JButton addBtn = new JButton("Add");
         panel.add(addBtn);
 
@@ -82,10 +89,11 @@ public class Production {
                 String colour = cb2.getSelectedItem().toString();
                 String weight = cb3.getSelectedItem().toString();
                 int qty = Integer.parseInt(tf1.getText());
+                String productType = cb5.getSelectedItem().toString();
                 try {
                     model.setRowCount(0);
                     Db db = new Db();
-                    ArrayList<JSONObject> jsonObjects = db.addProduct(product, colour, weight, qty);
+                    ArrayList<JSONObject> jsonObjects = db.addProduct(product, colour, weight, qty, productType);
                     for(JSONObject jsonObject : jsonObjects){
                         model.addRow(new Object[]{
                                 jsonObject.getString("when"),

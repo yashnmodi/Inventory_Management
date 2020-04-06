@@ -98,12 +98,4 @@ public class ModifyProducts {
         panel.setBackground(new Color(239,214,186));
         return panel;
     }
-        /*if(btnCode.equals("Change Data Source")) {
-            String str = JOptionPane.showInputDialog("Enter New Data Source:");
-            Utility.setSource(str);
-            System.out.print(str);
-        }
-        if(btnCode.equals("Home")) {
-            IMStart.changePanel(IMStart.mp);
-        }*/
 }

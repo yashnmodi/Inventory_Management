@@ -1,5 +1,6 @@
 package mysquare.core;
 
+import org.bson.Document;
 import org.json.JSONObject;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -8,7 +9,7 @@ import java.util.ArrayList;
 
 public class Stock {
 
-    public static JTable getStockView() throws Exception{
+    public static JTable getStockView(String viewName) throws Exception{
         DefaultTableModel model = new DefaultTableModel();
         JTable table = new JTable(model);
         model.addColumn("PRODUCT");
@@ -18,7 +19,8 @@ public class Stock {
 
         try {
             Db db = new Db();
-            ArrayList<JSONObject> jsonObjects = db.fetchData("Products");
+            Document query = new Document("type",viewName);
+            ArrayList<JSONObject> jsonObjects = db.fetchData("Products",query);
             for(JSONObject jsonObject : jsonObjects){
                 model.addRow(new Object[]{
                         jsonObject.getString("name"),

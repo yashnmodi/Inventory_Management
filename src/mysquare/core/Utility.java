@@ -33,22 +33,4 @@ public class Utility {
 		}
 		return properties;
 	}
-
-	/*public String[] getProductList() {
-		ArrayList<String> productList = Db.fetchPList();
-	    String[] productArr = productList.toArray(new String[productList.size()]);
-	    return productArr;
-	}
-	
-	public String[] getColourList() {
-		ArrayList<String> colourList = Db.fetchCList();
-	    String[] colourArr = colourList.toArray(new String[colourList.size()]);
-	    return colourArr;
-   	}
-	
-	public String[] getWeightList() {
-		ArrayList<String> weightList = Db.fetchWList();
-		String[] weightArr = weightList.toArray(new String[weightList.size()]);
-		return weightArr;
-	}*/
 }
