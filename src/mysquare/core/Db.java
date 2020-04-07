@@ -11,7 +11,7 @@ import java.util.Date;
 import java.util.HashMap;
 
 public class Db {
-	private final String mongoURI = "mongodb+srv://yash:admin@dataone-iedyp.mongodb.net/rbp?retryWrites=true&w=majority";
+	private final String mongoURI = "YOUR CONNECTION STRING";
 	DateFormat dateFormat = new SimpleDateFormat("dd-MMM-yyyy");
 
 	public ArrayList<JSONObject> fetchData(String tableName, Document query) throws Exception {
@@ -34,6 +34,7 @@ public class Db {
 		MongoCollection collection = database.getCollection(ApplicationConstants.CATALOGUE);
 		Document updates = new Document("$push", new Document(type, value));
 		collection.updateOne(new Document(), updates);
+		CachedCatalogue.latestCatalogue = false;
 		mongoClient.close();
 	}
 
@@ -43,10 +44,11 @@ public class Db {
 		MongoCollection collection = database.getCollection(ApplicationConstants.CATALOGUE);
 		Document updates = new Document("$pull",new Document(type,value));
 		collection.updateOne(new Document(),updates);
+		CachedCatalogue.latestCatalogue = false;
 		mongoClient.close();
 	}
 
-	public ArrayList<JSONObject> addProduct(String product, String colour, String weight, int qty, String type) throws Exception{
+	public ArrayList<JSONObject> addProduct(String product, String colour, String weight, int qty, String type, String shift) throws Exception{
 		Document query = new Document(
 				ApplicationConstants.COL_NAME,product)
 				.append(ApplicationConstants.COL_COLOUR,colour)
@@ -59,20 +61,19 @@ public class Db {
 		MongoCursor<Document> cursor = findIterable.iterator();
 		int availableQty = 0;
 		while (cursor.hasNext()){
-			availableQty = cursor.next().getInteger("qty");
+			availableQty = cursor.next().getInteger(ApplicationConstants.COL_QUANTITY);
 		}
 		if(0 == availableQty){
-			query.append(ApplicationConstants.COL_QUANTITY,qty);
+			Document newDoc = query.append(ApplicationConstants.COL_QUANTITY,qty);
 			collection.insertOne(query);
 			collection = database.getCollection(ApplicationConstants.MANUFACTURED);
-			query.append(ApplicationConstants.COL_DATE,dateFormat.format(new Date()));
-			collection.insertOne(query);
+			newDoc.append(ApplicationConstants.COL_DATE,dateFormat.format(new Date())+" - "+shift);
+			collection.insertOne(newDoc);
 		} else {
 			int newQty = qty + availableQty;
-			Document updated = new Document(ApplicationConstants.COL_QUANTITY,newQty).append(ApplicationConstants.COL_TYPE,type);
-			collection.updateOne(query, new Document("$set",updated));
+			collection.updateOne(query, new Document("$set", new Document(ApplicationConstants.COL_QUANTITY, newQty)));
 			collection = database.getCollection(ApplicationConstants.MANUFACTURED);
-			query.append(ApplicationConstants.COL_DATE,dateFormat.format(new Date()));
+			query.append(ApplicationConstants.COL_QUANTITY, qty).append(ApplicationConstants.COL_DATE,dateFormat.format(new Date())+" - "+shift);
 			collection.insertOne(query);
 		}
 
@@ -83,6 +84,7 @@ public class Db {
 			jsonList.add(new JSONObject(cursor.next().toJson()));
 		}
 		mongoClient.close();
+		System.out.println(jsonList);
 		return jsonList;
 	}
 
@@ -106,10 +108,9 @@ public class Db {
 //				filter.append("qty",qty).append("when",dateFormat.format(new Date())).append("type",type);
 //				collection.insertOne(filter);
 //			} else{}
-			Document updated = new Document(ApplicationConstants.COL_QUANTITY,availableQty).append(ApplicationConstants.COL_TYPE,type);
-			collection.updateOne(query, new Document("$set",updated));
+			collection.updateOne(query, new Document("$set", new Document(ApplicationConstants.COL_QUANTITY, availableQty)));
 			collection = database.getCollection(ApplicationConstants.DISPATCHED);
-			query.append(ApplicationConstants.COL_DATE,dateFormat.format(new Date()));
+			query.append(ApplicationConstants.COL_QUANTITY, qty).append(ApplicationConstants.COL_DATE,dateFormat.format(new Date()));
 			collection.insertOne(query);
 		} else{
 			System.out.println("Product Not Found!");

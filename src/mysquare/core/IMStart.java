@@ -73,6 +73,7 @@ public class IMStart {
 
         try {
             new IMStart();
+            new CachedCatalogue();
             jScrollPane = new JScrollPane(Stock.getStockView(query1));
             frame.getContentPane().add(BorderLayout.CENTER, jScrollPane);
             frame.setVisible(true);

@@ -13,9 +13,10 @@ public class ApplicationConstants {
     static final String M3I1 = "Modify products";
     static final String M4I1 = "About Software";
     static final String DEVELOPER = "Inventory Management System (IMS) v1.0.2\nAn open source project developed by Yash Modi\n\nVisit https://github.com/yashnmodi/Inventory_Management";
+    static final String[] CATALOGUE_ITMES = {ApplicationConstants.BOTTLES,ApplicationConstants.CAPS,ApplicationConstants.COL_COLOURS,ApplicationConstants.COL_WEIGHTS};
 
     /* Database, Tables & Columns */
-    static final String DATABASE = "rbp";
+    static final String DATABASE = "YOUR DB NAME";
     static final String PRODUCTS = "Products";
     static final String CATALOGUE = "Catalogue";
     static final String MANUFACTURED = "Manufactured";

@@ -24,7 +24,7 @@ public class Production {
 
         try {
             Db db = new Db();
-            ArrayList<JSONObject> jsonObjects = db.fetchData("Manufactured",query);
+            ArrayList<JSONObject> jsonObjects = db.fetchData(ApplicationConstants.MANUFACTURED,query);
             for(JSONObject jsonObject : jsonObjects){
                 model.addRow(new Object[]{
                         jsonObject.getString(ApplicationConstants.COL_DATE),
@@ -43,10 +43,15 @@ public class Production {
     public static JPanel getProductionPanel(String productType) throws Exception{
         JPanel panel = new JPanel();
         Db db = new Db();
-        JSONObject jsonObject = db.fetchCatalogue();
-        JSONArray arr1 = jsonObject.getJSONArray(ApplicationConstants.BOTTLES);
-        JSONArray arr2 = jsonObject.getJSONArray(ApplicationConstants.COL_COLOURS);
-        JSONArray arr3 = jsonObject.getJSONArray(ApplicationConstants.COL_WEIGHTS);
+        if(!CachedCatalogue.latestCatalogue)
+            new CachedCatalogue();
+        JSONArray arr1 = null;
+        if (ApplicationConstants.BOTTLES.equals(productType))
+            arr1 = CachedCatalogue.cachedCatalogue.get(ApplicationConstants.BOTTLES);
+        if(ApplicationConstants.CAPS.equals(productType))
+            arr1 = CachedCatalogue.cachedCatalogue.get(ApplicationConstants.CAPS);
+        JSONArray arr2 = CachedCatalogue.cachedCatalogue.get(ApplicationConstants.COL_COLOURS);
+        JSONArray arr3 = CachedCatalogue.cachedCatalogue.get(ApplicationConstants.COL_WEIGHTS);
         String[] products = arr1.toList().toArray(new String[arr1.length()]);
         String[] colours = arr2.toList().toArray(new String[arr2.length()]);
         String[] weights = arr3.toList().toArray(new String[arr3.length()]);
@@ -85,10 +90,10 @@ public class Production {
             String colour = cb2.getSelectedItem().toString();
             String weight = cb3.getSelectedItem().toString();
             int qty = Integer.parseInt(tf1.getText());
-//            String productType = cb5.getSelectedItem().toString();
+            String shift = cb5.getSelectedItem().toString();
             try {
                 model.setRowCount(0);
-                ArrayList<JSONObject> jsonObjects = db.addProduct(product, colour, weight, qty, productType);
+                ArrayList<JSONObject> jsonObjects = db.addProduct(product, colour, weight, qty, productType, shift);
                 for(JSONObject jsonObject1 : jsonObjects){
                     model.addRow(new Object[]{
                             jsonObject1.getString(ApplicationConstants.COL_DATE),
@@ -99,6 +104,7 @@ public class Production {
                 }
             } catch (Exception e) {
                 try {
+                    e.printStackTrace();
                     throw new Exception("Unable to add product.");
                 } catch (Exception ex) {
                     ex.printStackTrace();

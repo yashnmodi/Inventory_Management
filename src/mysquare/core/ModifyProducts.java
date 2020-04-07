@@ -9,90 +9,62 @@ public class ModifyProducts {
 
     public static JPanel getPanel(){
         JPanel panel = new JPanel();
-        JTextField product = new JTextField(40);
-        product.setToolTipText("Enter unique product");
-        product.setBounds(15, 25, 250, 20);
-        JTextField colour = new JTextField(40);
-        colour.setToolTipText("Enter unique colour");
-        colour.setBounds(15, 60, 250, 20);
-        JTextField weight = new JTextField(40);
-        weight.setToolTipText("Enter unique weight");
-        weight.setBounds(15, 95, 250, 20);
-        JButton addProduct = new JButton("Add Product");
-        addProduct.setBounds(280, 25, 120, 20);
-        JButton addColour = new JButton("Add Colour");
-        addColour.setBounds(280, 60, 120, 20);
-        JButton addWeight = new JButton("Add Weight");
-        addWeight.setBounds(280, 95, 120, 20);
-        JButton rmvProduct = new JButton("Remove Product");
-        rmvProduct.setBounds(410, 25, 120, 20);
-        JButton rmvColour = new JButton("Remove Colour");
-        rmvColour.setBounds(410, 60, 120, 20);
-        JButton rmvWeight = new JButton("Remove Weight");
-        rmvWeight.setBounds(410, 95, 120, 20);
+        JComboBox<String> cb = new JComboBox<>(ApplicationConstants.CATALOGUE_ITMES);
+        JLabel lab1 = new JLabel("Please select an item to add or remove:");
+        lab1.setBackground(Color.BLACK);
+//        lab1.setLocation(20,200);
+        cb.setBounds(30,60,100,20);
+        JTextField tf1 = new JTextField(40);
+        tf1.setToolTipText("Provide unique name only.");
+        tf1.setBounds(30, 90, 250, 20);
+        JButton addBtn = new JButton("Add");
+        addBtn.setBounds(30, 120, 90, 20);
+        JButton removeBtn = new JButton("Remove");
+        removeBtn.setBounds(130, 120, 90, 20);
         panel.setLayout(null);
-        panel.add(product);
-        panel.add(colour);
-        panel.add(weight);
-        panel.add(addProduct);
-        panel.add(rmvProduct);
-        panel.add(addColour);
-        panel.add(rmvColour);
-        panel.add(addWeight);
-        panel.add(rmvWeight);
+        panel.add(lab1);
+        panel.add(cb);
+        panel.add(tf1);
+        panel.add(addBtn);
+        panel.add(removeBtn);
 
-        addProduct.addActionListener(e -> {
+        addBtn.addActionListener(e -> {
             try {
                 Db db = new Db();
-                db.addItem(ApplicationConstants.BOTTLES,product.getText());
-                product.setText("");
+                String type = null;
+                if(ApplicationConstants.BOTTLES.equals(cb.getSelectedItem().toString())){
+                    type = ApplicationConstants.BOTTLES;
+                } else if (ApplicationConstants.CAPS.equals(cb.getSelectedItem().toString())){
+                    type = ApplicationConstants.CAPS;
+                } else if (ApplicationConstants.COL_COLOURS.equals(cb.getSelectedItem().toString())){
+                    type = ApplicationConstants.COL_COLOURS;
+                } else if (ApplicationConstants.COL_WEIGHTS.equals(cb.getSelectedItem().toString())){
+                    type = ApplicationConstants.COL_WEIGHTS;
+                }
+                db.addItem(type, tf1.getText());
+                tf1.setText("");
             } catch (Exception err) {
                 JOptionPane.showConfirmDialog(IMStart.frame, "Product already added.\nERROR:"+err.getMessage(),"WARNING",JOptionPane.WARNING_MESSAGE );
             }
         });
-        addColour.addActionListener(e -> {
+
+        removeBtn.addActionListener(e -> {
             try {
                 Db db = new Db();
-                db.addItem(ApplicationConstants.COL_COLOURS,colour.getText());
-                colour.setText("");
-            } catch (Exception err) {
-                JOptionPane.showConfirmDialog(IMStart.frame, "Colour already added.\nERROR:"+err.getMessage(),"WARNING",JOptionPane.WARNING_MESSAGE );
-            }
-        });
-        addWeight.addActionListener(e -> {
-            try {
-                Db db = new Db();
-                db.addItem(ApplicationConstants.COL_WEIGHTS,weight.getText());
-                weight.setText("");
-            } catch (Exception err) {
-                JOptionPane.showConfirmDialog(IMStart.frame, "Weight already added.\nERROR:"+err.getMessage(),"WARNING",JOptionPane.WARNING_MESSAGE );
-            }
-        });
-        rmvProduct.addActionListener(e -> {
-            try {
-                Db db = new Db();
-                db.removeItem(ApplicationConstants.BOTTLES,product.getText());
-                product.setText("");
+                String type = null;
+                if(ApplicationConstants.BOTTLES.equals(cb.getSelectedItem().toString())){
+                    type = ApplicationConstants.BOTTLES;
+                } else if (ApplicationConstants.CAPS.equals(cb.getSelectedItem().toString())){
+                    type = ApplicationConstants.CAPS;
+                } else if (ApplicationConstants.COL_COLOURS.equals(cb.getSelectedItem().toString())){
+                    type = ApplicationConstants.COL_COLOURS;
+                } else if (ApplicationConstants.COL_WEIGHTS.equals(cb.getSelectedItem().toString())){
+                    type = ApplicationConstants.COL_WEIGHTS;
+                }
+                db.removeItem(type, tf1.getText());
+                tf1.setText("");
             } catch (Exception err) {
                 JOptionPane.showConfirmDialog(IMStart.frame, "Product not found.\nERROR:"+err.getMessage(),"WARNING",JOptionPane.WARNING_MESSAGE );
-            }
-        });
-        rmvColour.addActionListener(e -> {
-            try {
-                Db db = new Db();
-                db.removeItem(ApplicationConstants.COL_COLOURS,colour.getText());
-                colour.setText("");
-            } catch (Exception err) {
-                JOptionPane.showConfirmDialog(IMStart.frame, "Colour not found.\nERROR:"+err.getMessage(),"WARNING",JOptionPane.WARNING_MESSAGE );
-            }
-        });
-        rmvWeight.addActionListener(e -> {
-            try {
-                Db db = new Db();
-                db.removeItem(ApplicationConstants.COL_WEIGHTS,weight.getText());
-                weight.setText("");
-            } catch (Exception err) {
-                JOptionPane.showConfirmDialog(IMStart.frame, "Weight not found.\nERROR:"+err.getMessage(),"WARNING",JOptionPane.WARNING_MESSAGE );
             }
         });
         panel.setBackground(new Color(239,214,186));

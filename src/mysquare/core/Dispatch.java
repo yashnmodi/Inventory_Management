@@ -1,19 +1,11 @@
 package mysquare.core;
 
-import com.mongodb.client.FindIterable;
-import com.mongodb.client.MongoCursor;
-import org.bson.BsonTimestamp;
 import org.bson.Document;
-import org.bson.codecs.IntegerCodec;
 import org.json.JSONArray;
 import org.json.JSONObject;
-
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.sql.ResultSet;
 import java.util.ArrayList;
 
 public class Dispatch {
@@ -50,18 +42,21 @@ public class Dispatch {
 
     public static JPanel getDispatchPanel(String productType){
         JPanel panel = new JPanel();
-        Db db = new Db();
-        JSONObject jsonObject = db.fetchCatalogue();
-        JSONArray arr1 = jsonObject.getJSONArray(ApplicationConstants.BOTTLES);
-        JSONArray arr2 = jsonObject.getJSONArray(ApplicationConstants.COL_COLOURS);
-        JSONArray arr3 = jsonObject.getJSONArray(ApplicationConstants.COL_WEIGHTS);
+        if(!CachedCatalogue.latestCatalogue)
+            new CachedCatalogue();
+        JSONArray arr1 = null;
+        if (ApplicationConstants.BOTTLES.equals(productType))
+            arr1 = CachedCatalogue.cachedCatalogue.get(ApplicationConstants.BOTTLES);
+        if(ApplicationConstants.CAPS.equals(productType))
+            arr1 = CachedCatalogue.cachedCatalogue.get(ApplicationConstants.CAPS);
+        JSONArray arr2 = CachedCatalogue.cachedCatalogue.get(ApplicationConstants.COL_COLOURS);
+        JSONArray arr3 = CachedCatalogue.cachedCatalogue.get(ApplicationConstants.COL_WEIGHTS);
         String[] products = arr1.toList().toArray(new String[arr1.length()]);
         String[] colours = arr2.toList().toArray(new String[arr1.length()]);
         String[] weights = arr3.toList().toArray(new String[arr1.length()]);
         JComboBox<String> cb1 = new JComboBox<>(products);
         JComboBox<String> cb2 = new JComboBox<>(colours);
         JComboBox<String> cb3 = new JComboBox<>(weights);
-        JComboBox<String> cb5 = new JComboBox<>(new String[]{"Day","Night"});
 
         // Components Added using Flow Layout
         JLabel lab1 = new JLabel(ApplicationConstants.PRODUCT);
@@ -81,10 +76,6 @@ public class Dispatch {
         panel.add(lab4);
         panel.add(tf1);
 
-        JLabel lab5 = new JLabel("SHIFT");
-        panel.add(lab5);
-        panel.add(cb5);
-
         JButton rmvBtn = new JButton("Remove");
         panel.add(rmvBtn);
 
@@ -93,7 +84,7 @@ public class Dispatch {
             String colour = cb2.getSelectedItem().toString();
             String weight = cb3.getSelectedItem().toString();
             int qty = Integer.parseInt(tf1.getText());
-//            String productType = cb5.getSelectedItem().toString();
+
             try {
                 model.setRowCount(0);
                 Db db1 = new Db();
@@ -108,6 +99,7 @@ public class Dispatch {
                 }
             } catch (Exception e) {
                 try {
+                    e.printStackTrace();
                     throw new Exception("Unable to sell product.");
                 } catch (Exception ex) {
                     ex.printStackTrace();
