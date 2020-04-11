@@ -38,4 +38,5 @@ public class ApplicationConstants {
     static final String COLOUR = "COLOUR";
     static final String WEIGHT = "WEIGHT";
     static final String QUANTITY = "QUANTITY";
+    static final String NAVIGATION_INFO = "Yo are curently viewing ";
 }
