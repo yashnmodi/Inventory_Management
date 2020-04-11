@@ -59,6 +59,7 @@ public class Production {
         JComboBox<String> cb2 = new JComboBox<>(colours);
         JComboBox<String> cb3 = new JComboBox<>(weights);
         JComboBox<String> cb5 = new JComboBox<>(new String[]{"Day","Night"});
+        JComboBox<String> cb6 = new JComboBox<>(new String[]{"Nos","Kg"});
 
         // Components Added using Flow Layout
         JLabel lab1 = new JLabel(ApplicationConstants.PRODUCT);
@@ -78,6 +79,10 @@ public class Production {
         panel.add(lab4);
         panel.add(tf1);
 
+        if (ApplicationConstants.CAPS.equals(productType)){
+            panel.add(cb6);
+        }
+
         JLabel lab5 = new JLabel("SHIFT");
         panel.add(lab5);
         panel.add(cb5);
@@ -91,6 +96,10 @@ public class Production {
             String weight = cb3.getSelectedItem().toString();
             int qty = Integer.parseInt(tf1.getText());
             String shift = cb5.getSelectedItem().toString();
+            String unitOfQty;
+            if (ApplicationConstants.CAPS.equals(productType)) {
+                unitOfQty = cb6.getSelectedItem().toString();
+            }
             try {
                 model.setRowCount(0);
                 ArrayList<JSONObject> jsonObjects = db.addProduct(product, colour, weight, qty, productType, shift);

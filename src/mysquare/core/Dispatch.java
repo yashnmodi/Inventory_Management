@@ -57,6 +57,7 @@ public class Dispatch {
         JComboBox<String> cb1 = new JComboBox<>(products);
         JComboBox<String> cb2 = new JComboBox<>(colours);
         JComboBox<String> cb3 = new JComboBox<>(weights);
+        JComboBox<String> cb6 = new JComboBox<>(new String[]{"Nos","Kg"});
 
         // Components Added using Flow Layout
         JLabel lab1 = new JLabel(ApplicationConstants.PRODUCT);
@@ -76,6 +77,10 @@ public class Dispatch {
         panel.add(lab4);
         panel.add(tf1);
 
+        if (ApplicationConstants.CAPS.equals(productType)){
+            panel.add(cb6);
+        }
+
         JButton rmvBtn = new JButton("Remove");
         panel.add(rmvBtn);
 
@@ -84,7 +89,10 @@ public class Dispatch {
             String colour = cb2.getSelectedItem().toString();
             String weight = cb3.getSelectedItem().toString();
             int qty = Integer.parseInt(tf1.getText());
-
+            String unitOfQty;
+            if (ApplicationConstants.CAPS.equals(productType)) {
+                unitOfQty = cb6.getSelectedItem().toString();
+            }
             try {
                 model.setRowCount(0);
                 Db db1 = new Db();
