@@ -1,4 +1,11 @@
 # Inventory_Management
+Version 2.2.0
+Built on April 19th, 2020.
+Major UI Changes & Some Features Added
++ Dashboard View
++ Clear History of Manufactured and Dispatched View
++ Bigger and Better Font
++ Product wise separation of colour and weights
 
 Version 2.0.0
 Built on April 5th, 2020.

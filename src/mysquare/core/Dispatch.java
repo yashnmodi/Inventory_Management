@@ -15,6 +15,8 @@ public class Dispatch {
     public static JTable getDispatchView(Document query) throws Exception{
         model = new DefaultTableModel();
         JTable table = new JTable(model);
+        table.setFont(IMStart.f3);
+        table.setRowHeight(20);
         table.setEnabled(false);
         model.addColumn(ApplicationConstants.DISPATCHED_DATE);
         model.addColumn(ApplicationConstants.PRODUCT);
@@ -31,33 +33,41 @@ public class Dispatch {
                         jsonObject.getString(ApplicationConstants.COL_NAME),
                         jsonObject.getString(ApplicationConstants.COL_COLOUR),
                         jsonObject.getString(ApplicationConstants.COL_WEIGHT),
-                        jsonObject.getInt(ApplicationConstants.COL_QUANTITY)});
+                        jsonObject.getString(ApplicationConstants.COL_QUANTITY)});
             }
         } catch (Exception e) {
             new CustomException(e.getMessage());
         }
-        table.setGridColor(new Color(239,214,186));
+        table.setGridColor(IMStart.c1);
         return table;
     }
 
     public static JPanel getDispatchPanel(String productType){
         JPanel panel = new JPanel();
+
         if(!CachedCatalogue.latestCatalogue)
             new CachedCatalogue();
         JSONArray arr1 = null;
-        if (ApplicationConstants.BOTTLES.equals(productType))
+        JSONArray arr2 = null;
+        JSONArray arr3 = null;
+        if (ApplicationConstants.BOTTLES.equals(productType)){
             arr1 = CachedCatalogue.cachedCatalogue.get(ApplicationConstants.BOTTLES);
-        if(ApplicationConstants.CAPS.equals(productType))
+            arr2 = CachedCatalogue.cachedCatalogue.get(ApplicationConstants.COL_COLOUR_BOTTLES);
+            arr3 = CachedCatalogue.cachedCatalogue.get(ApplicationConstants.COL_WEIGHT_BOTTLES);
+        }
+        if(ApplicationConstants.CAPS.equals(productType)){
             arr1 = CachedCatalogue.cachedCatalogue.get(ApplicationConstants.CAPS);
-        JSONArray arr2 = CachedCatalogue.cachedCatalogue.get(ApplicationConstants.COL_COLOURS);
-        JSONArray arr3 = CachedCatalogue.cachedCatalogue.get(ApplicationConstants.COL_WEIGHTS);
+            arr2 = CachedCatalogue.cachedCatalogue.get(ApplicationConstants.COL_COLOUR_CAPS);
+            arr3 = CachedCatalogue.cachedCatalogue.get(ApplicationConstants.COL_WEIGHT_CAPS);
+        }
         String[] products = arr1.toList().toArray(new String[arr1.length()]);
-        String[] colours = arr2.toList().toArray(new String[arr1.length()]);
-        String[] weights = arr3.toList().toArray(new String[arr1.length()]);
+        String[] colours = arr2.toList().toArray(new String[arr2.length()]);
+        String[] weights = arr3.toList().toArray(new String[arr3.length()]);
+
         JComboBox<String> cb1 = new JComboBox<>(products);
         JComboBox<String> cb2 = new JComboBox<>(colours);
         JComboBox<String> cb3 = new JComboBox<>(weights);
-        JComboBox<String> cb6 = new JComboBox<>(new String[]{"Nos","Kg"});
+        JComboBox<String> cb6 = new JComboBox<>(new String[]{ApplicationConstants.QTY_UNITS[0],ApplicationConstants.QTY_UNITS[1]});
 
         // Components Added using Flow Layout
         JLabel lab1 = new JLabel(ApplicationConstants.PRODUCT);
@@ -88,10 +98,11 @@ public class Dispatch {
             String product = cb1.getSelectedItem().toString();
             String colour = cb2.getSelectedItem().toString();
             String weight = cb3.getSelectedItem().toString();
-            int qty = Integer.parseInt(tf1.getText());
+            String qty = tf1.getText();
             String unitOfQty;
             if (ApplicationConstants.CAPS.equals(productType)) {
                 unitOfQty = cb6.getSelectedItem().toString();
+                qty = qty + " " + unitOfQty;
             }
             try {
                 model.setRowCount(0);
@@ -103,7 +114,7 @@ public class Dispatch {
                             jsonObject1.getString(ApplicationConstants.COL_NAME),
                             jsonObject1.getString(ApplicationConstants.COL_COLOUR),
                             jsonObject1.getString(ApplicationConstants.COL_WEIGHT),
-                            jsonObject1.getInt(ApplicationConstants.COL_QUANTITY)});
+                            jsonObject1.getString(ApplicationConstants.COL_QUANTITY)});
                 }
             } catch (Exception e) {
                 try {
@@ -114,7 +125,7 @@ public class Dispatch {
                 }
             }
         });
-        panel.setBackground(new Color(239,176,137));
+        panel.setBackground(IMStart.c1);
         return panel;
     }
 }

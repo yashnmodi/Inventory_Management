@@ -4,7 +4,6 @@ import org.bson.Document;
 import org.json.JSONObject;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import java.awt.*;
 import java.util.ArrayList;
 
 public class Stock {
@@ -12,7 +11,8 @@ public class Stock {
     public static JTable getStockView(Document query) throws Exception{
         DefaultTableModel model = new DefaultTableModel();
         JTable table = new JTable(model);
-        table.setEnabled(false);
+        table.setFont(IMStart.f3);
+        table.setRowHeight(20);
         model.addColumn(ApplicationConstants.PRODUCT);
         model.addColumn(ApplicationConstants.COLOUR);
         model.addColumn(ApplicationConstants.WEIGHT);
@@ -26,12 +26,12 @@ public class Stock {
                         jsonObject.getString(ApplicationConstants.COL_NAME),
                         jsonObject.getString(ApplicationConstants.COL_COLOUR),
                         jsonObject.getString(ApplicationConstants.COL_WEIGHT),
-                        jsonObject.getInt(ApplicationConstants.COL_QUANTITY)});
+                        jsonObject.getString(ApplicationConstants.COL_QUANTITY)});
             }
         } catch (Exception e) {
             new CustomException(e.getMessage());
         }
-        table.setGridColor(new Color(239,214,186));
+        table.setGridColor(IMStart.c1);
         return table;
     }
 }

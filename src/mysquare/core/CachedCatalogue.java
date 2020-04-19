@@ -2,8 +2,6 @@ package mysquare.core;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-
-import java.util.ArrayList;
 import java.util.HashMap;
 
 public class CachedCatalogue {
@@ -16,8 +14,10 @@ public class CachedCatalogue {
         JSONObject jsonObject = db.fetchCatalogue();
         cachedCatalogue.put(ApplicationConstants.BOTTLES, jsonObject.getJSONArray(ApplicationConstants.BOTTLES));
         cachedCatalogue.put(ApplicationConstants.CAPS, jsonObject.getJSONArray(ApplicationConstants.CAPS));
-        cachedCatalogue.put(ApplicationConstants.COL_COLOURS, jsonObject.getJSONArray(ApplicationConstants.COL_COLOURS));
-        cachedCatalogue.put(ApplicationConstants.COL_WEIGHTS, jsonObject.getJSONArray(ApplicationConstants.COL_WEIGHTS));
+        cachedCatalogue.put(ApplicationConstants.COL_COLOUR_BOTTLES, jsonObject.getJSONArray(ApplicationConstants.COL_COLOUR_BOTTLES));
+        cachedCatalogue.put(ApplicationConstants.COL_COLOUR_CAPS, jsonObject.getJSONArray(ApplicationConstants.COL_COLOUR_CAPS));
+        cachedCatalogue.put(ApplicationConstants.COL_WEIGHT_BOTTLES, jsonObject.getJSONArray(ApplicationConstants.COL_WEIGHT_BOTTLES));
+        cachedCatalogue.put(ApplicationConstants.COL_WEIGHT_CAPS, jsonObject.getJSONArray(ApplicationConstants.COL_WEIGHT_CAPS));
         latestCatalogue = true;
     }
 

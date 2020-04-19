@@ -32,7 +32,7 @@ public class Db {
 		MongoClient mongoClient = MongoClients.create(mongoURI);
 		MongoDatabase database = mongoClient.getDatabase(ApplicationConstants.DATABASE);
 		MongoCollection collection = database.getCollection(ApplicationConstants.CATALOGUE);
-		Document updates = new Document("$push", new Document(type, value));
+		Document updates = new Document("$addToSet", new Document(type, value));
 		collection.updateOne(new Document(), updates);
 		CachedCatalogue.latestCatalogue = false;
 		mongoClient.close();
@@ -48,7 +48,7 @@ public class Db {
 		mongoClient.close();
 	}
 
-	public ArrayList<JSONObject> addProduct(String product, String colour, String weight, int qty, String type, String shift) throws Exception{
+	public ArrayList<JSONObject> addProduct(String product, String colour, String weight, String qty, String type, String shift) throws Exception{
 		Document query = new Document(
 				ApplicationConstants.COL_NAME,product)
 				.append(ApplicationConstants.COL_COLOUR,colour)
@@ -61,17 +61,26 @@ public class Db {
 		MongoCursor<Document> cursor = findIterable.iterator();
 		int availableQty = 0;
 		while (cursor.hasNext()){
-			availableQty = cursor.next().getInteger(ApplicationConstants.COL_QUANTITY);
+			String qtyFromDb[] = cursor.next().getString(ApplicationConstants.COL_QUANTITY).split(" ");
+			availableQty = Integer.parseInt(qtyFromDb[0]);
 		}
 		if(0 == availableQty){
-			Document newDoc = query.append(ApplicationConstants.COL_QUANTITY,qty);
+			Document newDoc = query.append(ApplicationConstants.COL_QUANTITY, qty);
 			collection.insertOne(query);
 			collection = database.getCollection(ApplicationConstants.MANUFACTURED);
 			newDoc.append(ApplicationConstants.COL_DATE,dateFormat.format(new Date())+" - "+shift);
 			collection.insertOne(newDoc);
 		} else {
-			int newQty = qty + availableQty;
-			collection.updateOne(query, new Document("$set", new Document(ApplicationConstants.COL_QUANTITY, newQty)));
+			String qtyFromUser[] = qty.split(" ");
+			int newQty = Integer.parseInt(qtyFromUser[0]) + availableQty;
+			String newQtyS;
+			if (qty.contains(ApplicationConstants.QTY_UNITS[0]))
+				newQtyS = newQty + " " + ApplicationConstants.QTY_UNITS[0];
+			else if (qty.contains(ApplicationConstants.QTY_UNITS[1]))
+				newQtyS = newQty + " " + ApplicationConstants.QTY_UNITS[1];
+			else
+				newQtyS = String.valueOf(newQty);
+			collection.updateOne(query, new Document("$set", new Document(ApplicationConstants.COL_QUANTITY, newQtyS)));
 			collection = database.getCollection(ApplicationConstants.MANUFACTURED);
 			query.append(ApplicationConstants.COL_QUANTITY, qty).append(ApplicationConstants.COL_DATE,dateFormat.format(new Date())+" - "+shift);
 			collection.insertOne(query);
@@ -88,7 +97,7 @@ public class Db {
 		return jsonList;
 	}
 
-	public ArrayList<JSONObject> sellProduct(String product, String colour, String weight, int qty, String type) throws Exception{
+	public ArrayList<JSONObject> sellProduct(String product, String colour, String weight, String qty, String type) throws Exception{
 		Document query = new Document(ApplicationConstants.COL_NAME,product)
 				.append(ApplicationConstants.COL_COLOUR,colour)
 				.append(ApplicationConstants.COL_WEIGHT,weight)
@@ -100,15 +109,24 @@ public class Db {
 		MongoCursor<Document> cursor = findIterable.iterator();
 //		int availableQty = 0;
 		if (cursor.hasNext()){
-			int availableQty = cursor.next().getInteger(ApplicationConstants.COL_QUANTITY);
-			availableQty -= qty;
+			String[] qtyFromDb = cursor.next().getString(ApplicationConstants.COL_QUANTITY).split(" ");
+			int availableQty = Integer.parseInt(qtyFromDb[0]);
+			String[] availableQty1 =qty.split(" ");
+			availableQty -= Integer.parseInt(availableQty1[0]);
 //			if(availableQty <= 0){
 //				collection.deleteOne(filter);
 //				collection = database.getCollection(ApplicationConstants.DISPATCHED);
 //				filter.append("qty",qty).append("when",dateFormat.format(new Date())).append("type",type);
 //				collection.insertOne(filter);
 //			} else{}
-			collection.updateOne(query, new Document("$set", new Document(ApplicationConstants.COL_QUANTITY, availableQty)));
+			String qtyS;
+			if (qty.contains(ApplicationConstants.QTY_UNITS[0]))
+				qtyS = availableQty + " " + ApplicationConstants.QTY_UNITS[0];
+			else if (qty.contains(ApplicationConstants.QTY_UNITS[1]))
+				qtyS = availableQty + " " + ApplicationConstants.QTY_UNITS[1];
+			else
+				qtyS = String.valueOf(availableQty);
+			collection.updateOne(query, new Document("$set", new Document(ApplicationConstants.COL_QUANTITY, qtyS)));
 			collection = database.getCollection(ApplicationConstants.DISPATCHED);
 			query.append(ApplicationConstants.COL_QUANTITY, qty).append(ApplicationConstants.COL_DATE,dateFormat.format(new Date()));
 			collection.insertOne(query);
@@ -138,5 +156,13 @@ public class Db {
 		}
 		mongoClient.close();
 		return jsonObject;
+	}
+
+	public void deleteHistory(String table){
+		MongoClient mongoClient = MongoClients.create(mongoURI);
+		MongoDatabase database = mongoClient.getDatabase(ApplicationConstants.DATABASE);
+		MongoCollection collection = database.getCollection(table);
+		collection.deleteMany(new Document());
+		mongoClient.close();
 	}
 }
