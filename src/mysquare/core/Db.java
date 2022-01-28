@@ -12,7 +12,7 @@ import java.util.HashMap;
 
 public class Db {
 	private final String mongoURI = "YOUR CONNECTION STRING";
-	DateFormat dateFormat = new SimpleDateFormat("dd-MMM-yyyy");
+	static DateFormat dateFormat = new SimpleDateFormat("dd-MMM-yyyy");
 
 	public ArrayList<JSONObject> fetchData(String tableName, Document query) throws Exception {
 		ArrayList<JSONObject> jsonList = new ArrayList<>();
