@@ -12,6 +12,8 @@ public class IMStart {
 	public static JFrame frame = new JFrame();
     public static JPanel titlePanel = new JPanel();
     public static JLabel title = new JLabel();
+    public static JToolBar mainToolBar = new JToolBar();
+    public static JButton aboutBtn;
 	public static JMenuBar mb = new JMenuBar();
 	public static JMenu m2,m3,m4, m2i1, m2i2;
 	public static JMenuItem m3i1, m4i1, m2i1si1, m2i1si2, m2i1si3, m2i2si1, m2i2si2, m2i2si3, m2i3;
@@ -24,6 +26,8 @@ public class IMStart {
 
 
 	IMStart(){
+	    aboutBtn = new JButton(ApplicationConstants.ABOUT);
+        mainToolBar.add(aboutBtn);
 		m2 = new JMenu(ApplicationConstants.MENUBAR[0]);
 		m2.setMnemonic(KeyEvent.VK_V);
 		m3 = new JMenu(ApplicationConstants.MENUBAR[1]);
@@ -40,7 +44,7 @@ public class IMStart {
         m2i2si3 = new JMenuItem(ApplicationConstants.STOCK);
         m2i3 = new JMenuItem("Dashboard");
 		m3i1 = new JMenuItem(ApplicationConstants.M3I1);
-		m4i1 = new JMenuItem(ApplicationConstants.M4I1);
+		m4i1 = new JMenuItem(ApplicationConstants.ABOUT);
 
 		m2i1.add(m2i1si1);
 		m2i1.add(m2i1si2);
@@ -79,6 +83,7 @@ public class IMStart {
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setSize(1000, 600);
         frame.setJMenuBar(mb);
+//        frame.getContentPane().add(mainToolBar, BorderLayout.NORTH);
 
         Document query1 = new Document(ApplicationConstants.COL_TYPE,ApplicationConstants.BOTTLES);
         Document query2 = new Document(ApplicationConstants.COL_TYPE,ApplicationConstants.CAPS);
@@ -86,7 +91,7 @@ public class IMStart {
         try {
             new IMStart();
             setTitlePanel();
-            frame.getContentPane().add(BorderLayout.NORTH,titlePanel);
+//            frame.getContentPane().add(BorderLayout.NORTH,titlePanel);
             frame.getContentPane().add(BorderLayout.CENTER, getWelcomePanel());
             frame.setVisible(true);
 
@@ -214,8 +219,9 @@ public class IMStart {
                 }
             });
 
-            m4i1.addActionListener(e -> JOptionPane.showMessageDialog(frame, ApplicationConstants.DEVELOPER, "About Software", JOptionPane.INFORMATION_MESSAGE));
+            m4i1.addActionListener(e -> JOptionPane.showMessageDialog(frame, ApplicationConstants.DEVELOPER, ApplicationConstants.ABOUT, JOptionPane.INFORMATION_MESSAGE));
         } catch (Exception e) {
+            e.printStackTrace();
             JOptionPane.showMessageDialog(frame, "Sorry! Something went wrong.\nERROR:" + e.getMessage(), "ERROR", JOptionPane.ERROR_MESSAGE);
         }
     }
@@ -229,12 +235,31 @@ public class IMStart {
                 15, 3, IMStart.c2),
                 ApplicationConstants.PRODUCTS, TitledBorder.CENTER, TitledBorder.DEFAULT_POSITION, IMStart.f1));
 
+        JButton stockBtn = new JButton(ApplicationConstants.STOCK);
+        stockBtn.setUI(new StyledButtonUI());
         JButton bottlesBtn = new JButton(ApplicationConstants.BOTTLES);
         bottlesBtn.setUI(new StyledButtonUI());
         JButton capsBtn = new JButton(ApplicationConstants.CAPS);
         capsBtn.setUI(new StyledButtonUI());
+        welcomePanel.add(stockBtn);
         welcomePanel.add(bottlesBtn);
         welcomePanel.add(capsBtn);
+
+        stockBtn.addActionListener(e -> {
+            try {
+                frame.getContentPane().removeAll();
+                title.setFont(f1);
+                title.setText("Available Stocks for Bottles & Caps");
+                jScrollPane = new JScrollPane(Stock.getStockView(new Document()));
+                frame.getContentPane().add(BorderLayout.NORTH,titlePanel);
+                frame.getContentPane().add(BorderLayout.CENTER, jScrollPane);
+                frame.getContentPane().doLayout();
+                frame.update(frame.getGraphics());
+                frame.setVisible(true);
+            }catch (Exception ex){
+                JOptionPane.showMessageDialog(frame,"Unable to retrieve Stock.\nERROR:"+ex.getMessage(),"ERROR",JOptionPane.ERROR_MESSAGE);
+            }
+        });
 
         bottlesBtn.addActionListener(e -> {
             try {

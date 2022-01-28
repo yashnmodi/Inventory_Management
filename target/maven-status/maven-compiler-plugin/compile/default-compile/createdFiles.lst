@@ -1,10 +1,12 @@
 mysquare\core\Dispatch.class
 mysquare\core\Stock.class
-mysquare\core\Utility.class
+mysquare\core\StyledButtonUI.class
 mysquare\core\CachedCatalogue.class
+mysquare\core\Dashboard.class
 mysquare\core\CustomException.class
 mysquare\core\ModifyProducts.class
 mysquare\core\Production.class
 mysquare\core\IMStart.class
+mysquare\core\ModifyProducts$1.class
 mysquare\core\Db.class
 mysquare\core\ApplicationConstants.class
