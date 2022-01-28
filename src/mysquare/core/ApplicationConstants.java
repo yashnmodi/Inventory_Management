@@ -13,7 +13,7 @@ public class ApplicationConstants {
     static final String DISPATCH = "Dispatch";
     static final String STOCK = "Stock";
     static final String M3I1 = "Modify products";
-    static final String M4I1 = "About Software";
+    static final String ABOUT = "About Software";
     static final String DEVELOPER = "Inventory Management System (IMS) v2.0\nAn open source project developed by Yash Modi\n\nVisit https://github.com/yashnmodi/Inventory_Management";
     static final String[] CATALOGUE_ITMES = {ApplicationConstants.BOTTLES,ApplicationConstants.CAPS,ApplicationConstants.COL_COLOUR_BOTTLES,ApplicationConstants.COL_COLOUR_CAPS,ApplicationConstants.COL_WEIGHT_BOTTLES,ApplicationConstants.COL_WEIGHT_CAPS};
 
